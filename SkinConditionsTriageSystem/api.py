@@ -29,7 +29,8 @@ def single_channel_to_base64(img):
 
 @app.post("/process")
 async def process_image(
-    file: UploadFile = File(...),
+    file: UploadFile = File(None),
+    image_url: str = Form(None),
     enhancement_type: str = Form("Contrast Stretching"),
     blur_kernel: int = Form(5),
     t1: int = Form(100),
@@ -40,11 +41,32 @@ async def process_image(
 ):
     try:
         # Read uploaded image
-        contents = await file.read()
+        if file and file.filename != '':
+            contents = await file.read()
+        elif image_url:
+            import urllib.request
+            from urllib.parse import urlparse, parse_qs
+            
+            # Automatically extract direct image URL if user pastes a Google Images link
+            if "google.com/imgres" in image_url:
+                parsed_url = urlparse(image_url)
+                qs = parse_qs(parsed_url.query)
+                if 'imgurl' in qs:
+                    image_url = qs['imgurl'][0]
+                    
+            try:
+                req = urllib.request.Request(image_url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'})
+                response = urllib.request.urlopen(req)
+                contents = response.read()
+            except Exception as e:
+                return JSONResponse(status_code=400, content={"error": f"Failed to download image from URL: {str(e)}"})
+        else:
+            return JSONResponse(status_code=400, content={"error": "No image provided. Please upload a file or provide a URL."})
+            
         nparr = np.frombuffer(contents, np.uint8)
         img_bgr = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         if img_bgr is None:
-            return JSONResponse(status_code=400, content={"error": "Invalid image file format."})
+            return JSONResponse(status_code=400, content={"error": "Invalid image format. Ensure the URL points directly to an image file (.jpg, .png), not a webpage."})
             
         img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
         

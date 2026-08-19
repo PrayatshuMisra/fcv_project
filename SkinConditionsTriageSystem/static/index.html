@@ -96,13 +96,62 @@
             </header>
 
             <div class="content-wrapper">
-                <div class="upload-card" id="upload-zone" onclick="document.getElementById('file-input').click()">
-                    <div class="upload-content">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                        <h3>Select or Drop Patient Imagery</h3>
-                        <p>Supported formats: High-resolution JPG, PNG</p>
+                
+                <div class="disclaimer-alert">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    <div>
+                        <strong>Clinical Input Requirement:</strong> 
+                        This triage pipeline expects a <em>macro close-up</em> of a single skin lesion. Feeding it landscape photos or entire human faces will cause the shape-analysis mathematics (ABCD) to trigger a false positive due to extreme structural asymmetry.
                     </div>
-                    <input type="file" id="file-input" hidden accept="image/*">
+                </div>
+
+                <div class="input-methods">
+                    <div class="input-tabs">
+                        <button class="tab-btn active" onclick="switchTab('file')">Local File</button>
+                        <button class="tab-btn" onclick="switchTab('url')">Online URL</button>
+                        <button class="tab-btn" onclick="switchTab('camera')">Camera Capture</button>
+                    </div>
+
+                    <div id="tab-file" class="tab-content active">
+                        <div class="upload-card" id="upload-zone" onclick="document.getElementById('file-input').click()">
+                            <div class="upload-content">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                <h3>Select, Drop, or Paste (Ctrl+V) Imagery</h3>
+                                <p>Supported formats: High-resolution JPG, PNG</p>
+                            </div>
+                            <input type="file" id="file-input" hidden accept="image/*">
+                        </div>
+                    </div>
+
+                    <div id="tab-url" class="tab-content" style="display:none;">
+                        <div class="url-input-card">
+                            <h3>Fetch Image from Online URL</h3>
+                            <div class="url-form">
+                                <input type="text" id="url-input" class="form-control" placeholder="https://upload.wikimedia.org/wikipedia/.../image.jpg">
+                                <button class="action-btn" onclick="processUrl()">Fetch & Analyze</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-camera" class="tab-content" style="display:none;">
+                        <div class="camera-card">
+                            <video id="camera-stream" autoplay playsinline style="display:none;"></video>
+                            <div class="camera-placeholder" id="camera-placeholder">
+                                📷 Camera offline
+                            </div>
+                            <div class="camera-controls">
+                                <button class="action-btn secondary camera-btn" id="start-camera-btn" onclick="startCamera()">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                                    Start Camera
+                                </button>
+                                <button class="action-btn success-btn camera-btn" id="capture-btn" onclick="captureCamera()" style="display:none;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
+                                    Capture Photo
+                                </button>
+                            </div>
+                            <canvas id="camera-canvas" style="display:none;"></canvas>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="loader" class="loader-wrapper hidden">

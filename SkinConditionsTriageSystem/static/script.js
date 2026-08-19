@@ -6,6 +6,24 @@ const form = document.getElementById('pipeline-form');
 
 let lbpChartInstance = null;
 
+// Input Method Tabs
+function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + tabId).style.display = 'block';
+    event.currentTarget.classList.add('active');
+}
+
+// Global Clipboard Paste Handler
+window.addEventListener('paste', e => {
+    if (e.clipboardData.files.length > 0) {
+        const file = e.clipboardData.files[0];
+        if (file.type.startsWith('image/')) {
+            processImage(file);
+        }
+    }
+});
+
 // Handle file selection
 fileInput.addEventListener('change', (e) => {
     if(e.target.files.length > 0) {
@@ -34,21 +52,72 @@ uploadZone.addEventListener('drop', (e) => {
     }
 });
 
-// Trigger re-process when parameters change (if an image is loaded)
+// Trigger re-process when parameters change
 form.addEventListener('change', () => {
     if(fileInput.files.length > 0) {
         processImage(fileInput.files[0]);
+    } else if (document.getElementById('url-input').value) {
+        processUrl();
     }
 });
 
-async function processImage(file) {
-    // Show loader, hide results
-    uploadZone.style.display = 'none';
-    loader.classList.remove('hidden');
-    results.classList.add('hidden');
+// URL Processing
+function processUrl() {
+    const url = document.getElementById('url-input').value;
+    if (!url) return;
+    const formData = new FormData(form);
+    formData.append('image_url', url);
+    submitFormData(formData);
+}
 
+// Camera Handling
+let stream = null;
+async function startCamera() {
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        const video = document.getElementById('camera-stream');
+        video.srcObject = stream;
+        video.style.display = 'block';
+        document.getElementById('camera-placeholder').style.display = 'none';
+        document.getElementById('start-camera-btn').style.display = 'none';
+        document.getElementById('capture-btn').style.display = 'inline-block';
+    } catch (err) {
+        alert("Camera access denied or unavailable.");
+    }
+}
+
+function captureCamera() {
+    const video = document.getElementById('camera-stream');
+    const canvas = document.getElementById('camera-canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    
+    canvas.toBlob(blob => {
+        const file = new File([blob], "camera_capture.jpg", { type: "image/jpeg" });
+        processImage(file);
+        
+        // Stop stream
+        stream.getTracks().forEach(track => track.stop());
+        video.style.display = 'none';
+        document.getElementById('camera-placeholder').style.display = 'flex';
+        document.getElementById('start-camera-btn').style.display = 'inline-block';
+        document.getElementById('capture-btn').style.display = 'none';
+    }, 'image/jpeg');
+}
+
+function processImage(file) {
+    if (!file) return;
     const formData = new FormData(form);
     formData.append('file', file);
+    submitFormData(formData);
+}
+
+async function submitFormData(formData) {
+    // Show loader, hide results
+    document.querySelector('.input-methods').style.display = 'none';
+    loader.classList.remove('hidden');
+    results.classList.add('hidden');
 
     try {
         const response = await fetch('/process', {
@@ -120,12 +189,12 @@ async function processImage(file) {
         // Hide loader, show results
         loader.classList.add('hidden');
         results.classList.remove('hidden');
-        uploadZone.style.display = 'block';
+        document.querySelector('.input-methods').style.display = 'block';
 
     } catch (error) {
         alert(error.message);
         loader.classList.add('hidden');
-        uploadZone.style.display = 'block';
+        document.querySelector('.input-methods').style.display = 'block';
     }
 }
 

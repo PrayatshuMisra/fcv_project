@@ -13,21 +13,21 @@ fileInput.addEventListener('change', (e) => {
     }
 });
 
-// Drag and drop handlers
+// Drag and drop handlers (Updated to match Clinical Light Theme)
 uploadZone.addEventListener('dragover', (e) => {
     e.preventDefault();
     uploadZone.style.borderColor = 'var(--accent-blue)';
-    uploadZone.style.backgroundColor = 'rgba(59, 130, 246, 0.02)';
+    uploadZone.style.backgroundColor = 'rgba(2, 132, 199, 0.04)'; 
 });
 uploadZone.addEventListener('dragleave', (e) => {
     e.preventDefault();
-    uploadZone.style.borderColor = 'var(--border-color)';
-    uploadZone.style.backgroundColor = 'var(--bg-card)';
+    uploadZone.style.borderColor = 'var(--accent-blue)'; 
+    uploadZone.style.backgroundColor = 'transparent';
 });
 uploadZone.addEventListener('drop', (e) => {
     e.preventDefault();
-    uploadZone.style.borderColor = 'var(--border-color)';
-    uploadZone.style.backgroundColor = 'var(--bg-card)';
+    uploadZone.style.borderColor = 'var(--accent-blue)';
+    uploadZone.style.backgroundColor = 'transparent';
     if(e.dataTransfer.files.length > 0) {
         fileInput.files = e.dataTransfer.files;
         processImage(e.dataTransfer.files[0]);
@@ -145,7 +145,7 @@ function renderChart(histData) {
             datasets: [{
                 label: 'Normalized Texture Frequency',
                 data: histData,
-                backgroundColor: '#3b82f6', // matches accent-blue
+                backgroundColor: '#0284c7', // Updated to match the new Sky 600 clinical blue
                 borderRadius: 4,
             }]
         },
@@ -157,18 +157,18 @@ function renderChart(histData) {
                 title: {
                     display: true,
                     text: 'LBP Micro-Texture Signature',
-                    color: '#f1f5f9',
-                    font: { family: 'Inter', size: 14, weight: '500' }
+                    color: '#0f172a', // Updated to Slate 900 for Light Mode readability
+                    font: { family: 'Inter', size: 14, weight: '600' }
                 }
             },
             scales: {
                 x: {
                     grid: { display: false },
-                    ticks: { color: '#94a3b8' }
+                    ticks: { color: '#64748b' } // Slate 500
                 },
                 y: {
-                    grid: { color: '#2a3441' },
-                    ticks: { color: '#94a3b8' }
+                    grid: { color: '#e2e8f0' }, // Slate 200 grid lines
+                    ticks: { color: '#64748b' } // Slate 500
                 }
             }
         }

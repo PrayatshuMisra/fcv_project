@@ -42,37 +42,44 @@
                             <option value="Contrast Stretching">Contrast Stretching</option>
                             <option value="Histogram Equalization">Histogram Equalization</option>
                         </select>
+                        <span class="form-desc">Equalization applies aggressive contrast flattening. Stretching uses min-max scaling to preserve natural tones.</span>
                     </div>
 
                     <div class="form-group">
                         <label>Gaussian Kernel Size: <span id="blur-val">5</span>px</label>
                         <input type="range" name="blur_kernel" min="3" max="15" step="2" value="5" oninput="document.getElementById('blur-val').innerText = this.value">
+                        <span class="form-desc">Higher values increase blur, erasing skin pores/hair but softening lesion boundaries. Lower values preserve sharp details.</span>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <label>Canny T1: <span id="t1-val">100</span></label>
                             <input type="range" name="t1" min="0" max="255" value="100" oninput="document.getElementById('t1-val').innerText = this.value">
+                            <span class="form-desc">Lower threshold. Increases to ignore faint edges.</span>
                         </div>
                         <div class="form-group">
                             <label>Canny T2: <span id="t2-val">200</span></label>
                             <input type="range" name="t2" min="0" max="255" value="200" oninput="document.getElementById('t2-val').innerText = this.value">
+                            <span class="form-desc">Upper threshold. Increases for strict edge detection.</span>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label>K-Means Segments: <span id="k-val">3</span></label>
                         <input type="range" name="k_clusters" min="2" max="8" value="3" oninput="document.getElementById('k-val').innerText = this.value">
+                        <span class="form-desc">Higher values break image into more color regions (can over-segment). Lower values group colors aggressively.</span>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <label>LBP Radius: <span id="r-val">3</span></label>
                             <input type="range" name="lbp_radius" min="1" max="5" value="3" oninput="document.getElementById('r-val').innerText = this.value">
+                            <span class="form-desc">Higher values look at larger texture patterns.</span>
                         </div>
                         <div class="form-group">
                             <label>LBP Points: <span id="p-val">24</span></label>
                             <input type="range" name="lbp_points" min="8" max="32" step="8" value="24" oninput="document.getElementById('p-val').innerText = this.value">
+                            <span class="form-desc">Increases the angular resolution of texture data.</span>
                         </div>
                     </div>
                 </form>

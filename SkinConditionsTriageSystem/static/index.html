@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dermatological Assessment Pipeline</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>ClinicalVision</h2>
+                <p>Diagnostic Processing Pipeline</p>
+            </div>
+            
+            <div class="sidebar-section team-card">
+                <h3>System Information</h3>
+                <div class="team-details">
+                    <p><strong>Developed by:</strong></p>
+                    <ul>
+                        <li>Rajit Mohan Shrivastava</li>
+                        <li>Prayatshu Misra</li>
+                        <li>Eknoor Singh Chhabra</li>
+                    </ul>
+                    <span class="badge">CSE 3176 | AIML-B</span>
+                </div>
+            </div>
+
+            <div class="sidebar-section controls">
+                <h3>Pipeline Parameters</h3>
+                <form id="pipeline-form">
+                    <div class="form-group">
+                        <label>Enhancement Algorithm</label>
+                        <select name="enhancement_type" class="form-control">
+                            <option value="Contrast Stretching">Contrast Stretching</option>
+                            <option value="Histogram Equalization">Histogram Equalization</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Gaussian Kernel Size: <span id="blur-val">5</span>px</label>
+                        <input type="range" name="blur_kernel" min="3" max="15" step="2" value="5" oninput="document.getElementById('blur-val').innerText = this.value">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Canny T1: <span id="t1-val">100</span></label>
+                            <input type="range" name="t1" min="0" max="255" value="100" oninput="document.getElementById('t1-val').innerText = this.value">
+                        </div>
+                        <div class="form-group">
+                            <label>Canny T2: <span id="t2-val">200</span></label>
+                            <input type="range" name="t2" min="0" max="255" value="200" oninput="document.getElementById('t2-val').innerText = this.value">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>K-Means Segments: <span id="k-val">3</span></label>
+                        <input type="range" name="k_clusters" min="2" max="8" value="3" oninput="document.getElementById('k-val').innerText = this.value">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>LBP Radius: <span id="r-val">3</span></label>
+                            <input type="range" name="lbp_radius" min="1" max="5" value="3" oninput="document.getElementById('r-val').innerText = this.value">
+                        </div>
+                        <div class="form-group">
+                            <label>LBP Points: <span id="p-val">24</span></label>
+                            <input type="range" name="lbp_points" min="8" max="32" step="8" value="24" oninput="document.getElementById('p-val').innerText = this.value">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-nav">
+                <h1>Dermatological Lesion Triage System</h1>
+                <div class="status-indicator">
+                    <span class="status-dot"></span> System Ready
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div class="upload-card" id="upload-zone" onclick="document.getElementById('file-input').click()">
+                    <div class="upload-content">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        <h3>Select or Drop Patient Imagery</h3>
+                        <p>Supported formats: High-resolution JPG, PNG</p>
+                    </div>
+                    <input type="file" id="file-input" hidden accept="image/*">
+                </div>
+
+                <div id="loader" class="loader-wrapper hidden">
+                    <div class="spinner"></div>
+                    <p>Executing Computer Vision Pipeline...</p>
+                </div>
+
+                <div id="results" class="results-layout hidden">
+                    
+                    <!-- Phase 1 -->
+                    <section class="analysis-section">
+                        <div class="section-header">
+                            <div class="step-indicator">Step 1</div>
+                            <h2>Preprocessing & Optical Enhancement</h2>
+                        </div>
+                        <div class="card-grid">
+                            <div class="image-card">
+                                <img id="img-original" src="" alt="Original">
+                                <div class="card-footer">Raw Clinical Image <span id="img-dim" class="meta"></span></div>
+                            </div>
+                            <div class="image-card">
+                                <img id="img-enhanced" src="" alt="Enhanced">
+                                <div class="card-footer">Enhanced Image</div>
+                            </div>
+                        </div>
+                        <div class="inference-box">
+                            <h4>Analysis & Inference:</h4>
+                            <p><strong>Action Done:</strong> Applied spatial domain intensity transformations to correct poor illumination and equalize contrast in the raw image.</p>
+                            <p><strong>Inference:</strong> By standardizing the brightness, we ensure that subsequent edge detection and clustering algorithms are not biased by uneven lighting or shadows, revealing the true pigmentation of the lesion.</p>
+                        </div>
+                    </section>
+
+                    <!-- Phase 2 -->
+                    <section class="analysis-section">
+                        <div class="section-header">
+                            <div class="step-indicator">Step 2</div>
+                            <h2>Noise Suppression & Boundary Detection</h2>
+                        </div>
+                        <div class="card-grid">
+                            <div class="image-card">
+                                <img id="img-blurred" src="" alt="Blurred">
+                                <div class="card-footer">Gaussian Filter Applied</div>
+                            </div>
+                            <div class="image-card">
+                                <img id="img-edges" src="" alt="Edges">
+                                <div class="card-footer">Canny Edge Map</div>
+                            </div>
+                        </div>
+                        <div class="inference-box">
+                            <h4>Analysis & Inference:</h4>
+                            <p><strong>Action Done:</strong> Filtered high-frequency noise using a Gaussian kernel, followed by Canny Edge Detection to mathematically locate sharp intensity gradients.</p>
+                            <p><strong>Inference:</strong> The Gaussian blur successfully mitigated skin pores, hair, and minor blemishes. The resulting edge map highlights the structural boundaries of the lesion, which is critical for assessing morphological irregularity (a key indicator in dermatological diagnostics).</p>
+                        </div>
+                    </section>
+
+                    <!-- Phase 3 -->
+                    <section class="analysis-section">
+                        <div class="section-header">
+                            <div class="step-indicator">Step 3</div>
+                            <h2>Lesion Isolation & Segmentation (K-Means)</h2>
+                        </div>
+                        <div class="image-card single-wide">
+                            <img id="img-segmented" src="" alt="Segmented">
+                            <div class="card-footer">Color-Quantized Master Output</div>
+                        </div>
+                        <h4 class="subsection-title">Isolated Tissue Regions:</h4>
+                        <div class="cluster-grid" id="cluster-container">
+                            <!-- Clusters injected dynamically -->
+                        </div>
+                        <div class="inference-box">
+                            <h4>Analysis & Inference:</h4>
+                            <p><strong>Action Done:</strong> Partitioned the image into distinct regions based on color similarity using K-Means clustering.</p>
+                            <p><strong>Inference:</strong> The algorithm effectively separates the affected lesion tissue from the surrounding healthy skin. This isolation ensures that our final feature analysis is performed strictly on the anomaly, preventing healthy skin data from skewing the results.</p>
+                        </div>
+                    </section>
+
+                    <!-- Phase 4 -->
+                    <section class="analysis-section">
+                        <div class="section-header">
+                            <div class="step-indicator">Step 4</div>
+                            <h2>Quantitative Feature Analysis (LBP)</h2>
+                        </div>
+                        <div class="card-grid">
+                            <div class="image-card">
+                                <img id="img-lbp" src="" alt="LBP">
+                                <div class="card-footer">Local Binary Pattern Map</div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="lbpChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="inference-box">
+                            <h4>Analysis & Inference:</h4>
+                            <p><strong>Action Done:</strong> Computed the Local Binary Pattern (LBP) across the region and generated a normalized histogram of the texture codes.</p>
+                            <p><strong>Inference:</strong> The LBP histogram provides a robust, mathematical "fingerprint" of the skin's micro-texture. A highly varied histogram indicates irregular, rough lesion textures, while a concentrated histogram suggests smooth, uniform tissue. This numerical signature is now ready to be ingested by diagnostic machine learning models.</p>
+                        </div>
+                    </section>
+                    
+                    <!-- Phase 5 (NEW) -->
+                    <section class="analysis-section">
+                        <div class="section-header">
+                            <div class="step-indicator" style="background-color: rgba(16, 185, 129, 0.1); color: var(--success);">Final Step</div>
+                            <h2>Diagnostic Risk Assessment (Automated ABCD)</h2>
+                        </div>
+                        
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-title">Asymmetry (A)</div>
+                                <div class="metric-value" id="val-asymmetry">-</div>
+                                <div class="metric-desc">Ratio of bounding box dimensions. >1.3 indicates irregular shape.</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-title">Border Irregularity (B)</div>
+                                <div class="metric-value" id="val-border">-</div>
+                                <div class="metric-desc">Compactness (Perimeter²/4πArea). >1.5 indicates ragged borders.</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-title">Color Variance (C)</div>
+                                <div class="metric-value" id="val-color">-</div>
+                                <div class="metric-desc">Standard Dev of RGB channels. >35 indicates multi-colored risk.</div>
+                            </div>
+                        </div>
+
+                        <div class="risk-banner" id="risk-banner">
+                            <h3 id="risk-level">Awaiting Analysis...</h3>
+                        </div>
+
+                        <div class="inference-box">
+                            <h4>Clinical Conclusion:</h4>
+                            <p><strong>Action Done:</strong> Extracted mathematical metrics from the K-Means cluster mask and Canny edge map to simulate the dermatological ABCD rule.</p>
+                            <p><strong>Inference:</strong> By calculating the asymmetry, border compactness, and color deviation of the isolated lesion, the system assigns a baseline clinical risk score. This proves that the earlier computer vision preprocessing steps yield highly actionable data that can directly automate real-world diagnostic triage protocols.</p>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

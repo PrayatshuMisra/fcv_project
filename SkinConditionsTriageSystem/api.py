@@ -46,16 +46,16 @@ def get_sample_images():
     samples = [
         {
             "id": "melanoma",
-            "name": "Superficial Spreading Melanoma (ISIC_0000029)",
+            "name": "Superficial Spreading Melanoma (ISIC_0000031)",
             "diagnosis": "Malignant Melanoma (Histopathology Confirmed)",
-            "description": "Validated ISIC Archive case ISIC_0000029: Marked structural asymmetry, ragged notched borders, and deep melanin pigmentation.",
+            "description": "Validated ISIC Archive case ISIC_0000031: Marked structural asymmetry, ragged notched borders, and deep melanin pigmentation.",
             "filename": "melanoma.jpg"
         },
         {
             "id": "benign_nevus",
-            "name": "Dysplastic Benign Nevus (ISIC_0000000)",
+            "name": "Benign Melanocytic Nevus (ISIC_0000001)",
             "diagnosis": "Benign Melanocytic Nevus (Histopathology Confirmed)",
-            "description": "Validated ISIC Archive case ISIC_0000000: Uniform benign melanocytic proliferation with regular reticular network.",
+            "description": "Validated ISIC Archive case ISIC_0000001: Uniform benign melanocytic proliferation with regular reticular network.",
             "filename": "benign_nevus.jpg"
         },
         {

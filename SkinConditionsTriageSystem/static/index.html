@@ -3,293 +3,895 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dermatological Assessment Pipeline</title>
+    <title>ClinicalVision — Dermoscopy Visual Triage Workstation</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
+<body class="clinical-theme">
     
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h2>ClinicalVision</h2>
-                <p>Diagnostic Processing Pipeline</p>
-            </div>
-            
-            <div class="sidebar-section team-card">
-                <h3>System Information</h3>
-                <div class="team-details">
-                    <p><strong>Developed by:</strong></p>
-                    <ul>
-                        <li>Rajit Mohan Shrivastava</li>
-                        <li>Prayatshu Misra</li>
-                        <li>Eknoor Singh Chhabra</li>
-                    </ul>
-                    <span class="badge">CSE 3176 | AIML-B</span>
+    <div class="app-shell">
+        
+        <!-- Collapsible / Sticky Clinical Parameters Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-badge-row">
+                    <div class="brand-icon-box">
+                        <!-- Clinical reticle / crosshair SVG icon -->
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <line x1="12" y1="3" x2="12" y2="7"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                            <line x1="3" y1="12" x2="7" y2="12"></line>
+                            <line x1="17" y1="12" x2="21" y2="12"></line>
+                            <circle cx="12" cy="12" r="2.5"></circle>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="brand-title">ClinicalVision<span class="version-badge">PRO</span></h2>
+                        <span class="brand-subtitle">Dermoscopy Triage Workstation</span>
+                    </div>
+                </div>
+                <div class="academic-affil">
+                    <span class="affil-dept">CSE 3176: Foundations of Computer Vision</span>
+                    <span class="affil-inst">Manipal Institute of Technology • MAHE</span>
                 </div>
             </div>
 
-            <div class="sidebar-section controls">
-                <h3>Pipeline Parameters</h3>
+            <!-- Clinician / Student Metadata Panel -->
+            <div class="sidebar-section clinician-panel">
+                <div class="section-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <span>Investigator Dossier</span>
+                </div>
+                <div class="investigator-list">
+                    <div class="investigator-item">
+                        <span class="inv-name">Rajit Mohan Shrivastava</span>
+                        <span class="inv-id">240962378</span>
+                    </div>
+                    <div class="investigator-item">
+                        <span class="inv-name">Prayatshu Misra</span>
+                        <span class="inv-id">240962386</span>
+                    </div>
+                    <div class="investigator-item">
+                        <span class="inv-name">Eknoor Singh Chhabra</span>
+                        <span class="inv-id">240962412</span>
+                    </div>
+                </div>
+                <div class="faculty-tag">
+                    <span class="tag-title">Guide:</span> Dr. Roopalakshmi R, Associate Professor
+                </div>
+            </div>
+
+            <!-- Pipeline Parameters (Labs 1 to 5) -->
+            <div class="sidebar-section pipeline-controls">
+                <div class="section-header-row">
+                    <div class="section-label">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+                        <span>Pipeline Controls (Labs 1–5)</span>
+                    </div>
+                    <button type="button" class="btn-text-action" onclick="resetPipelineDefaults()" title="Reset to standard clinical benchmark defaults">Reset</button>
+                </div>
+
                 <form id="pipeline-form">
-                    <div class="form-group">
-                        <label>Enhancement Algorithm</label>
-                        <select name="enhancement_type" class="form-control">
-                            <option value="Contrast Stretching">Contrast Stretching</option>
-                            <option value="Histogram Equalization">Histogram Equalization</option>
-                        </select>
-                        <span class="form-desc">Equalization applies aggressive contrast flattening. Stretching uses min-max scaling to preserve natural tones.</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Gaussian Kernel Size: <span id="blur-val">5</span>px</label>
-                        <input type="range" name="blur_kernel" min="3" max="15" step="2" value="5" oninput="document.getElementById('blur-val').innerText = this.value">
-                        <span class="form-desc">Higher values increase blur, erasing skin pores/hair but softening lesion boundaries. Lower values preserve sharp details.</span>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Canny T1: <span id="t1-val">100</span></label>
-                            <input type="range" name="t1" min="0" max="255" value="100" oninput="document.getElementById('t1-val').innerText = this.value">
-                            <span class="form-desc">Lower threshold. Increases to ignore faint edges.</span>
+                    
+                    <!-- Parameter Block 1: Illumination & Enhancement (Lab 2) -->
+                    <div class="control-card">
+                        <div class="control-card-header">
+                            <span class="step-tag">Lab 2</span>
+                            <span class="control-title">Spatial Domain Enhancement</span>
                         </div>
                         <div class="form-group">
-                            <label>Canny T2: <span id="t2-val">200</span></label>
-                            <input type="range" name="t2" min="0" max="255" value="200" oninput="document.getElementById('t2-val').innerText = this.value">
-                            <span class="form-desc">Upper threshold. Increases for strict edge detection.</span>
+                            <label for="enhancement_type">Algorithm</label>
+                            <select name="enhancement_type" id="enhancement_type" class="form-select">
+                                <option value="CLAHE" selected>CLAHE (Clinical Benchmark)</option>
+                                <option value="Contrast Stretching">Contrast Stretching (Min-Max)</option>
+                                <option value="Histogram Equalization">Global Histogram Equalization</option>
+                                <option value="Gamma Correction">Power-Law (Gamma Correction)</option>
+                            </select>
+                            <p class="form-caption">CLAHE divides the image into contextual tiles to boost local lesion borders without noise blooming.</p>
+                        </div>
+
+                        <!-- Dynamic Gamma Slider -->
+                        <div class="form-group" id="gamma-group" style="display: none;">
+                            <div class="slider-label-row">
+                                <label for="gamma_val">Gamma Value (&gamma;)</label>
+                                <span class="val-pill" id="gamma-val">1.0</span>
+                            </div>
+                            <input type="range" name="gamma_val" id="gamma_val" class="form-range" min="0.4" max="2.4" step="0.1" value="1.0" oninput="document.getElementById('gamma-val').innerText = this.value">
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label>K-Means Segments: <span id="k-val">3</span></label>
-                        <input type="range" name="k_clusters" min="2" max="8" value="3" oninput="document.getElementById('k-val').innerText = this.value">
-                        <span class="form-desc">Higher values break image into more color regions (can over-segment). Lower values group colors aggressively.</span>
+                    <!-- Parameter Block 2: Artifacts & Filtering (Lab 3) -->
+                    <div class="control-card">
+                        <div class="control-card-header">
+                            <span class="step-tag">Lab 3</span>
+                            <span class="control-title">Artifact & Noise Filtering</span>
+                        </div>
+                        
+                        <!-- DullRazor Inpainting Toggle -->
+                        <div class="toggle-row">
+                            <label class="toggle-switch">
+                                <input type="checkbox" name="apply_hair_removal" id="apply_hair_removal" value="true">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <div class="toggle-text">
+                                <span class="toggle-title">DullRazor Hair Suppression</span>
+                                <span class="toggle-sub">Black Top-Hat + Fast-Marching Inpaint</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="filter_type">Spatial Filter</label>
+                            <select name="filter_type" id="filter_type" class="form-select">
+                                <option value="Bilateral" selected>Bilateral (Edge-Preserving)</option>
+                                <option value="Gaussian">Gaussian Blur (Low-Pass)</option>
+                                <option value="Median">Median Filter (Impulsive)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="slider-label-row">
+                                <label for="blur_kernel">Kernel Aperture</label>
+                                <span class="val-pill"><span id="blur-val">5</span> px</span>
+                            </div>
+                            <input type="range" name="blur_kernel" id="blur_kernel" class="form-range" min="3" max="15" step="2" value="5" oninput="document.getElementById('blur-val').innerText = this.value">
+                        </div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>LBP Radius: <span id="r-val">3</span></label>
-                            <input type="range" name="lbp_radius" min="1" max="5" value="3" oninput="document.getElementById('r-val').innerText = this.value">
-                            <span class="form-desc">Higher values look at larger texture patterns.</span>
+                    <!-- Parameter Block 3: Edge Extraction (Lab 4) -->
+                    <div class="control-card">
+                        <div class="control-card-header">
+                            <span class="step-tag">Lab 4</span>
+                            <span class="control-title">Boundary Edge Operator</span>
                         </div>
                         <div class="form-group">
-                            <label>LBP Points: <span id="p-val">24</span></label>
-                            <input type="range" name="lbp_points" min="8" max="32" step="8" value="24" oninput="document.getElementById('p-val').innerText = this.value">
-                            <span class="form-desc">Increases the angular resolution of texture data.</span>
+                            <label for="edge_operator">Operator</label>
+                            <select name="edge_operator" id="edge_operator" class="form-select">
+                                <option value="Canny" selected>Canny (Dual-Threshold Hysteresis)</option>
+                                <option value="Sobel">Sobel Gradient Magnitude</option>
+                            </select>
+                        </div>
+                        <div id="canny-thresholds">
+                            <div class="form-group">
+                                <div class="slider-label-row">
+                                    <label for="t1">Lower Threshold (T₁)</label>
+                                    <span class="val-pill" id="t1-val">100</span>
+                                </div>
+                                <input type="range" name="t1" id="t1" class="form-range" min="10" max="255" value="100" oninput="document.getElementById('t1-val').innerText = this.value">
+                            </div>
+                            <div class="form-group">
+                                <div class="slider-label-row">
+                                    <label for="t2">Upper Threshold (T₂)</label>
+                                    <span class="val-pill" id="t2-val">200</span>
+                                </div>
+                                <input type="range" name="t2" id="t2" class="form-range" min="20" max="255" value="200" oninput="document.getElementById('t2-val').innerText = this.value">
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Parameter Block 4: Segmentation & Clustering (Lab 5) -->
+                    <div class="control-card">
+                        <div class="control-card-header">
+                            <span class="step-tag">Lab 5</span>
+                            <span class="control-title">Tissue Color Segmentation</span>
+                        </div>
+                        <div class="form-group">
+                            <div class="slider-label-row">
+                                <label for="k_clusters">K-Means Clusters (K)</label>
+                                <span class="val-pill" id="k-val">3</span>
+                            </div>
+                            <input type="range" name="k_clusters" id="k_clusters" class="form-range" min="2" max="6" value="3" oninput="document.getElementById('k-val').innerText = this.value">
+                            <p class="form-caption">Unsupervised 3D color quantization with automated boundary contrast localization.</p>
+                        </div>
+                    </div>
+
+                    <!-- Parameter Block 5: Texture Analysis (Lab 5) -->
+                    <div class="control-card">
+                        <div class="control-card-header">
+                            <span class="step-tag">Lab 5</span>
+                            <span class="control-title">Micro-Texture (LBP)</span>
+                        </div>
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <div class="slider-label-row">
+                                    <label for="lbp_radius">Radius (R)</label>
+                                    <span class="val-pill" id="r-val">3</span>
+                                </div>
+                                <input type="range" name="lbp_radius" id="lbp_radius" class="form-range" min="1" max="5" value="3" oninput="document.getElementById('r-val').innerText = this.value">
+                            </div>
+                            <div class="form-group">
+                                <div class="slider-label-row">
+                                    <label for="lbp_points">Points (P)</label>
+                                    <span class="val-pill" id="p-val">24</span>
+                                </div>
+                                <input type="range" name="lbp_points" id="lbp_points" class="form-range" min="8" max="32" step="8" value="24" oninput="document.getElementById('p-val').innerText = this.value">
+                            </div>
+                        </div>
+                    </div>
+
                 </form>
             </div>
         </aside>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <header class="top-nav">
-                <h1>Dermatological Lesion Triage System</h1>
-                <div class="status-indicator">
-                    <span class="status-dot"></span> System Ready
+        <!-- Main Medical Workspace -->
+        <main class="main-viewport">
+            
+            <!-- Global Top Navigation Bar -->
+            <header class="workstation-nav">
+                <div class="nav-left">
+                    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle Controls">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <div class="nav-header-info">
+                        <div class="workstation-badge">Dermatology PACS Diagnostic Engine</div>
+                        <h1 class="nav-page-title">Automated Visual Triage & Histopathologic Risk Scoring</h1>
+                    </div>
+                </div>
+
+                <div class="nav-right">
+                    <div class="system-status-pill" id="system-status">
+                        <span class="status-indicator-dot"></span>
+                        <span class="status-text">Pipeline Ready</span>
+                    </div>
+
+                    <button type="button" class="btn-action btn-outline" id="export-report-btn" onclick="exportClinicalReport()" style="display: none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v8H6z"></path></svg>
+                        <span>Export Clinical Dossier</span>
+                    </button>
                 </div>
             </header>
 
-            <div class="content-wrapper">
-                
-                <div class="disclaimer-alert">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                    <div>
-                        <strong>Clinical Input Requirement:</strong> 
-                        This triage pipeline expects a <em>macro close-up</em> of a single skin lesion. Feeding it landscape photos or entire human faces will cause the shape-analysis mathematics (ABCD) to trigger a false positive due to extreme structural asymmetry.
-                    </div>
-                </div>
+            <div class="viewport-content">
 
-                <div class="input-methods">
-                    <div class="input-tabs">
-                        <button class="tab-btn active" onclick="switchTab('file')">Local File</button>
-                        <button class="tab-btn" onclick="switchTab('url')">Online URL</button>
-                        <button class="tab-btn" onclick="switchTab('camera')">Camera Capture</button>
+                <!-- PACS Clinical Benchmarks Ribbon (1-Click Real ISIC Cases) -->
+                <section class="pacs-benchmark-ribbon">
+                    <div class="ribbon-header">
+                        <div class="ribbon-title-box">
+                            <span class="clinical-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                            </span>
+                            <div>
+                                <h3 class="ribbon-title">Clinical ISIC Reference Cases (One-Click Verification)</h3>
+                                <p class="ribbon-subtitle">Pre-calibrated clinical dermoscopy benchmarks with histopathologic ground truth.</p>
+                            </div>
+                        </div>
                     </div>
 
-                    <div id="tab-file" class="tab-content active">
-                        <div class="upload-card" id="upload-zone" onclick="document.getElementById('file-input').click()">
-                            <div class="upload-content">
-                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                                <h3>Select, Drop, or Paste (Ctrl+V) Imagery</h3>
-                                <p>Supported formats: High-resolution JPG, PNG</p>
+                    <div class="pacs-case-grid">
+                        
+                        <!-- Case 1: Melanoma -->
+                        <div class="pacs-case-card" id="card-melanoma" onclick="loadSampleCase('melanoma')">
+                            <div class="case-thumb-wrap">
+                                <img src="/static/samples/melanoma.jpg" alt="ISIC_0000029 Melanoma" class="case-thumb">
+                                <span class="case-badge-pill badge-malignant">Malignant</span>
+                            </div>
+                            <div class="case-meta">
+                                <div class="case-id">ISIC_0000029</div>
+                                <div class="case-dx">Superficial Spreading Melanoma</div>
+                                <div class="case-desc">Asymmetric architecture, notched margins, deep melanin variegated pattern.</div>
+                                <div class="case-stat">Histopathology: Positive (TDS: 6.90)</div>
+                            </div>
+                        </div>
+
+                        <!-- Case 2: Benign Nevus -->
+                        <div class="pacs-case-card" id="card-benign_nevus" onclick="loadSampleCase('benign_nevus')">
+                            <div class="case-thumb-wrap">
+                                <img src="/static/samples/benign_nevus.jpg" alt="ISIC_0000000 Dysplastic Nevus" class="case-thumb">
+                                <span class="case-badge-pill badge-benign">Benign</span>
+                            </div>
+                            <div class="case-meta">
+                                <div class="case-id">ISIC_0000000</div>
+                                <div class="case-dx">Dysplastic Melanocytic Nevus</div>
+                                <div class="case-desc">Regular pigment network, preserved bilateral symmetry, uniform chromophores.</div>
+                                <div class="case-stat">Histopathology: Negative (TDS: 4.30)</div>
+                            </div>
+                        </div>
+
+                        <!-- Case 3: Basal Cell Carcinoma -->
+                        <div class="pacs-case-card" id="card-basal_cell" onclick="loadSampleCase('basal_cell')">
+                            <div class="case-thumb-wrap">
+                                <img src="/static/samples/basal_cell.jpg" alt="Basal Cell Carcinoma" class="case-thumb">
+                                <span class="case-badge-pill badge-suspicious">BCC Neoplasm</span>
+                            </div>
+                            <div class="case-meta">
+                                <div class="case-id">Dermoscopy Case</div>
+                                <div class="case-dx">Nodular Basal Cell Carcinoma</div>
+                                <div class="case-desc">Pearly translucence, blue-gray ovoid nests, prominent branching arborizing vessels.</div>
+                                <div class="case-stat">Clinical Class: Non-Melanoma Carcinoma</div>
+                            </div>
+                        </div>
+
+                        <!-- Case 4: Seborrheic Keratosis -->
+                        <div class="pacs-case-card" id="card-seborrheic_keratosis" onclick="loadSampleCase('seborrheic_keratosis')">
+                            <div class="case-thumb-wrap">
+                                <img src="/static/samples/seborrheic_keratosis.jpg" alt="ISIC_0024312 Keratosis" class="case-thumb">
+                                <span class="case-badge-pill badge-benign">Benign Plaque</span>
+                            </div>
+                            <div class="case-meta">
+                                <div class="case-id">ISIC_0024312</div>
+                                <div class="case-dx">Pigmented Seborrheic Keratosis</div>
+                                <div class="case-desc">Stuck-on verrucous plaque, pseudofollicular keratin cysts, high LBP contrast.</div>
+                                <div class="case-stat">Histopathology: Benign Hyperplasia</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Input Ingestion Suite -->
+                <section class="ingestion-section">
+                    <div class="input-tabs-bar">
+                        <button type="button" class="tab-button active" onclick="switchTab('file')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <span>Dermoscopy Image File</span>
+                        </button>
+                        <button type="button" class="tab-button" onclick="switchTab('url')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                            <span>PACS / Clinical Web URL</span>
+                        </button>
+                        <button type="button" class="tab-button" onclick="switchTab('camera')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                            <span>Live Video Dermatoscope</span>
+                        </button>
+                    </div>
+
+                    <!-- File Ingestion Dropzone -->
+                    <div id="tab-file" class="tab-pane active">
+                        <div class="dropzone-card" id="upload-zone" onclick="document.getElementById('file-input').click()">
+                            <div class="dropzone-body">
+                                <div class="dropzone-icon">
+                                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <circle cx="12" cy="14" r="3"></circle>
+                                    </svg>
+                                </div>
+                                <h4 class="dropzone-title">Upload Clinical Dermoscopy Imagery</h4>
+                                <p class="dropzone-text">Drag and drop file here, browse your local drive, or paste directly with <kbd>Ctrl+V</kbd></p>
+                                <span class="dropzone-meta">Accepted Formats: TIFF, PNG, JPG, DICOM-converted dermoscopy (Up to 50MB)</span>
                             </div>
                             <input type="file" id="file-input" hidden accept="image/*">
                         </div>
                     </div>
 
-                    <div id="tab-url" class="tab-content" style="display:none;">
+                    <!-- URL Ingestion -->
+                    <div id="tab-url" class="tab-pane" style="display:none;">
                         <div class="url-input-card">
-                            <h3>Fetch Image from Online URL</h3>
-                            <div class="url-form">
-                                <input type="text" id="url-input" class="form-control" placeholder="https://upload.wikimedia.org/wikipedia/.../image.jpg">
-                                <button class="action-btn" onclick="processUrl()">Fetch & Analyze</button>
+                            <div class="url-input-group">
+                                <input type="url" id="url-input" class="form-input" placeholder="https://isic-archive.com/api/v1/image/.../download" aria-label="Clinical Image URL">
+                                <button type="button" class="btn-action btn-primary" onclick="processUrl()">
+                                    <span>Fetch & Analyze</span>
+                                </button>
                             </div>
+                            <span class="input-hint">Direct link to dermoscopy image or Google Images result.</span>
                         </div>
                     </div>
 
-                    <div id="tab-camera" class="tab-content" style="display:none;">
-                        <div class="camera-card">
-                            <video id="camera-stream" autoplay playsinline style="display:none;"></video>
-                            <div class="camera-placeholder" id="camera-placeholder">
-                                📷 Camera offline
+                    <!-- Live Dermatoscope Camera -->
+                    <div id="tab-camera" class="tab-pane" style="display:none;">
+                        <div class="camera-stream-card">
+                            <div class="camera-viewport-frame">
+                                <video id="camera-stream" autoplay playsinline style="display:none;"></video>
+                                <div class="camera-offline-view" id="camera-placeholder">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                                    <span>Optical Dermatoscope Stream Inactive</span>
+                                </div>
                             </div>
-                            <div class="camera-controls">
-                                <button class="action-btn secondary camera-btn" id="start-camera-btn" onclick="startCamera()">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
-                                    Start Camera
+                            <div class="camera-action-bar">
+                                <button type="button" class="btn-action btn-secondary" id="start-camera-btn" onclick="startCamera()">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                                    <span>Initialize Camera Sensor</span>
                                 </button>
-                                <button class="action-btn success-btn camera-btn" id="capture-btn" onclick="captureCamera()" style="display:none;">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
-                                    Capture Photo
+                                <button type="button" class="btn-action btn-accent" id="capture-btn" onclick="captureCamera()" style="display:none;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
+                                    <span>Capture Macro Frame</span>
                                 </button>
                             </div>
                             <canvas id="camera-canvas" style="display:none;"></canvas>
                         </div>
                     </div>
+
+                </section>
+
+                <!-- Processing Spinner / Feedback -->
+                <div id="loader" class="loader-container hidden">
+                    <div class="pipeline-loader-box">
+                        <div class="clinical-spinner"></div>
+                        <div class="loader-meta">
+                            <h4 id="loader-status">Executing Classical Computer Vision Pipeline...</h4>
+                            <p class="loader-sub">Decoupling color spaces &bull; Morphological filtering &bull; Computing Stolz ABCD vectors</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div id="loader" class="loader-wrapper hidden">
-                    <div class="spinner"></div>
-                    <p>Executing Computer Vision Pipeline...</p>
-                </div>
-
+                <!-- Comprehensive Results & Diagnostic Dossier View -->
                 <div id="results" class="results-layout hidden">
-                    
-                    <!-- Phase 1 -->
-                    <section class="analysis-section">
-                        <div class="section-header">
-                            <div class="step-indicator">Step 1</div>
-                            <h2>Preprocessing & Optical Enhancement</h2>
-                        </div>
-                        <div class="card-grid">
-                            <div class="image-card">
-                                <img id="img-original" src="" alt="Original">
-                                <div class="card-footer">Raw Clinical Image <span id="img-dim" class="meta"></span></div>
-                            </div>
-                            <div class="image-card">
-                                <img id="img-enhanced" src="" alt="Enhanced">
-                                <div class="card-footer">Enhanced Image</div>
-                            </div>
-                        </div>
-                        <div class="inference-box">
-                            <h4>Analysis & Inference:</h4>
-                            <p><strong>Action Done:</strong> Applied spatial domain intensity transformations to correct poor illumination and equalize contrast in the raw image.</p>
-                            <p><strong>Inference:</strong> By standardizing the brightness, we ensure that subsequent edge detection and clustering algorithms are not biased by uneven lighting or shadows, revealing the true pigmentation of the lesion.</p>
-                        </div>
-                    </section>
 
-                    <!-- Phase 2 -->
-                    <section class="analysis-section">
-                        <div class="section-header">
-                            <div class="step-indicator">Step 2</div>
-                            <h2>Noise Suppression & Boundary Detection</h2>
-                        </div>
-                        <div class="card-grid">
-                            <div class="image-card">
-                                <img id="img-blurred" src="" alt="Blurred">
-                                <div class="card-footer">Gaussian Filter Applied</div>
-                            </div>
-                            <div class="image-card">
-                                <img id="img-edges" src="" alt="Edges">
-                                <div class="card-footer">Canny Edge Map</div>
-                            </div>
-                        </div>
-                        <div class="inference-box">
-                            <h4>Analysis & Inference:</h4>
-                            <p><strong>Action Done:</strong> Filtered high-frequency noise using a Gaussian kernel, followed by Canny Edge Detection to mathematically locate sharp intensity gradients.</p>
-                            <p><strong>Inference:</strong> The Gaussian blur successfully mitigated skin pores, hair, and minor blemishes. The resulting edge map highlights the structural boundaries of the lesion, which is critical for assessing morphological irregularity (a key indicator in dermatological diagnostics).</p>
-                        </div>
-                    </section>
-
-                    <!-- Phase 3 -->
-                    <section class="analysis-section">
-                        <div class="section-header">
-                            <div class="step-indicator">Step 3</div>
-                            <h2>Lesion Isolation & Segmentation (K-Means)</h2>
-                        </div>
-                        <div class="image-card single-wide">
-                            <img id="img-segmented" src="" alt="Segmented">
-                            <div class="card-footer">Color-Quantized Master Output</div>
-                        </div>
-                        <h4 class="subsection-title">Isolated Tissue Regions:</h4>
-                        <div class="cluster-grid" id="cluster-container">
-                            <!-- Clusters injected dynamically -->
-                        </div>
-                        <div class="inference-box">
-                            <h4>Analysis & Inference:</h4>
-                            <p><strong>Action Done:</strong> Partitioned the image into distinct regions based on color similarity using K-Means clustering.</p>
-                            <p><strong>Inference:</strong> The algorithm effectively separates the affected lesion tissue from the surrounding healthy skin. This isolation ensures that our final feature analysis is performed strictly on the anomaly, preventing healthy skin data from skewing the results.</p>
-                        </div>
-                    </section>
-
-                    <!-- Phase 4 -->
-                    <section class="analysis-section">
-                        <div class="section-header">
-                            <div class="step-indicator">Step 4</div>
-                            <h2>Quantitative Feature Analysis (LBP)</h2>
-                        </div>
-                        <div class="card-grid">
-                            <div class="image-card">
-                                <img id="img-lbp" src="" alt="LBP">
-                                <div class="card-footer">Local Binary Pattern Map</div>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="lbpChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="inference-box">
-                            <h4>Analysis & Inference:</h4>
-                            <p><strong>Action Done:</strong> Computed the Local Binary Pattern (LBP) across the region and generated a normalized histogram of the texture codes.</p>
-                            <p><strong>Inference:</strong> The LBP histogram provides a robust, mathematical "fingerprint" of the skin's micro-texture. A highly varied histogram indicates irregular, rough lesion textures, while a concentrated histogram suggests smooth, uniform tissue. This numerical signature is now ready to be ingested by diagnostic machine learning models.</p>
-                        </div>
-                    </section>
-                    
-                    <!-- Phase 5 (NEW) -->
-                    <section class="analysis-section">
-                        <div class="section-header">
-                            <div class="step-indicator" style="background-color: rgba(16, 185, 129, 0.1); color: var(--success);">Final Step</div>
-                            <h2>Diagnostic Risk Assessment (Automated ABCD)</h2>
-                        </div>
+                    <!-- Triage Summary & Stolz ABCD Score Card (Prominent Top Display) -->
+                    <section class="diagnostic-summary-section">
                         
-                        <div class="metrics-grid">
-                            <div class="metric-card">
-                                <div class="metric-title">Asymmetry (A)</div>
-                                <div class="metric-value" id="val-asymmetry">-</div>
-                                <div class="metric-desc">Ratio of bounding box dimensions. >1.3 indicates irregular shape.</div>
+                        <div class="summary-top-grid">
+                            
+                            <!-- Master TDS Risk Meter Box -->
+                            <div class="tds-master-card" id="tds-card">
+                                <div class="tds-header-row">
+                                    <span class="tds-title-label">Stolz Total Dermoscopy Score (TDS)</span>
+                                    <span class="tds-calc-formula">TDS = 1.3A + 0.1B + 0.5C + 0.5D</span>
+                                </div>
+
+                                <div class="tds-core-display">
+                                    <div class="tds-number-box">
+                                        <span class="tds-number-val" id="tds-val">--</span>
+                                        <span class="tds-max-scale">/ 8.90</span>
+                                    </div>
+                                    <div class="tds-verdict-box">
+                                        <div class="risk-badge-large" id="risk-badge">Evaluating...</div>
+                                        <h3 class="risk-diagnosis-title" id="risk-level">Awaiting Triage Computation</h3>
+                                    </div>
+                                </div>
+
+                                <!-- Visual Continuous Risk Meter Bar -->
+                                <div class="tds-meter-wrapper">
+                                    <div class="meter-bar-track">
+                                        <div class="meter-zone zone-benign" title="Benign: TDS < 4.75">
+                                            <span>Benign (&lt;4.75)</span>
+                                        </div>
+                                        <div class="meter-zone zone-suspicious" title="Suspicious: 4.75 ≤ TDS < 5.45">
+                                            <span>Suspicious (4.75–5.45)</span>
+                                        </div>
+                                        <div class="meter-zone zone-malignant" title="Malignant: TDS ≥ 5.45">
+                                            <span>Malignant (&ge;5.45)</span>
+                                        </div>
+                                        <!-- Animated Needle Marker -->
+                                        <div class="meter-needle-marker" id="meter-marker" style="left: 0%;">
+                                            <div class="needle-pointer"></div>
+                                            <div class="needle-label" id="needle-score">0.0</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="clinical-recommendation-box">
+                                    <div class="rec-label">Clinical Recommendation:</div>
+                                    <p class="rec-text" id="clinical-action">Executing multi-color space decomposition and morphological boundary synthesis.</p>
+                                </div>
                             </div>
-                            <div class="metric-card">
-                                <div class="metric-title">Border Irregularity (B)</div>
-                                <div class="metric-value" id="val-border">-</div>
-                                <div class="metric-desc">Compactness (Perimeter²/4πArea). >1.5 indicates ragged borders.</div>
+
+                            <!-- Image Quick Comparison / Master Diagnostic Thumbnail -->
+                            <div class="quick-overview-card">
+                                <div class="overview-header">
+                                    <span class="overview-title">Master Delineation Overlay</span>
+                                    <span class="overview-meta" id="img-dim">-- px</span>
+                                </div>
+                                <div class="overview-image-wrap" onclick="openLightbox('img-overlay', 'Diagnostic Contour & Hull Overlay')">
+                                    <img id="img-overlay" src="" alt="Master Diagnostic Overlay" class="overview-img">
+                                    <span class="zoom-badge">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                                        Click to Zoom
+                                    </span>
+                                </div>
+                                <div class="overlay-legend-compact">
+                                    <span class="legend-chip"><span class="legend-color-dot dot-red"></span> Contour</span>
+                                    <span class="legend-chip"><span class="legend-color-dot dot-cyan"></span> Convex Hull</span>
+                                    <span class="legend-chip"><span class="legend-color-dot dot-green"></span> BBox</span>
+                                    <span class="legend-chip"><span class="legend-color-dot dot-yellow"></span> Centroid</span>
+                                </div>
                             </div>
-                            <div class="metric-card">
-                                <div class="metric-title">Color Variance (C)</div>
-                                <div class="metric-value" id="val-color">-</div>
-                                <div class="metric-desc">Standard Dev of RGB channels. >35 indicates multi-colored risk.</div>
+
+                        </div>
+
+                        <!-- 4-Pillar Stolz ABCD Feature Breakdown -->
+                        <div class="abcd-quad-grid">
+                            
+                            <!-- Asymmetry -->
+                            <div class="abcd-card">
+                                <div class="abcd-card-header">
+                                    <span class="abcd-code">A</span>
+                                    <span class="abcd-weight">Weight: &times; 1.3</span>
+                                </div>
+                                <div class="abcd-name">Asymmetry Factor</div>
+                                <div class="abcd-score-row">
+                                    <span class="abcd-score-val" id="val-asymmetry">--</span>
+                                    <span class="abcd-score-max">/ 2</span>
+                                </div>
+                                <p class="abcd-detail" id="desc-asymmetry">Dual principal inertia axes symmetry overlap.</p>
+                            </div>
+
+                            <!-- Border Irregularity -->
+                            <div class="abcd-card">
+                                <div class="abcd-card-header">
+                                    <span class="abcd-code">B</span>
+                                    <span class="abcd-weight">Weight: &times; 0.1</span>
+                                </div>
+                                <div class="abcd-name">Border Irregularity</div>
+                                <div class="abcd-score-row">
+                                    <span class="abcd-score-val" id="val-border">--</span>
+                                    <span class="abcd-score-max">/ 8</span>
+                                </div>
+                                <p class="abcd-detail" id="desc-border">Compactness: <strong id="val-compactness">--</strong> &bull; 8-octant radial notches.</p>
+                            </div>
+
+                            <!-- Color Variegation -->
+                            <div class="abcd-card">
+                                <div class="abcd-card-header">
+                                    <span class="abcd-code">C</span>
+                                    <span class="abcd-weight">Weight: &times; 0.5</span>
+                                </div>
+                                <div class="abcd-name">Color Variegation</div>
+                                <div class="abcd-score-row">
+                                    <span class="abcd-score-val" id="val-color">--</span>
+                                    <span class="abcd-score-max">/ 6</span>
+                                </div>
+                                <p class="abcd-detail" id="desc-color">Chromophores: <span id="colors-list">--</span></p>
+                            </div>
+
+                            <!-- Diameter -->
+                            <div class="abcd-card">
+                                <div class="abcd-card-header">
+                                    <span class="abcd-code">D</span>
+                                    <span class="abcd-weight">Weight: &times; 0.5</span>
+                                </div>
+                                <div class="abcd-name">Diameter Factor</div>
+                                <div class="abcd-score-row">
+                                    <span class="abcd-score-val" id="val-diameter">--</span>
+                                    <span class="abcd-score-max">/ 5</span>
+                                </div>
+                                <p class="abcd-detail" id="desc-diameter">Estimated: <strong id="val-diameter-mm">--</strong> mm (&gt;6mm clinical risk threshold).</p>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- Step 0: Morphological Hair Removal (Optional) -->
+                    <section class="analysis-panel" id="section-hair-removal" style="display:none;">
+                        <div class="panel-header">
+                            <div class="step-indicator">Lab 3 Pre-Filter</div>
+                            <div class="panel-header-text">
+                                <h3 class="panel-title">Morphological Artifact Suppression (DullRazor Inpainting)</h3>
+                                <p class="panel-subtitle">Isolation of dark linear keratin hair strands via morphological Black Top-Hat transforms.</p>
                             </div>
                         </div>
 
-                        <div class="risk-banner" id="risk-banner">
-                            <h3 id="risk-level">Awaiting Analysis...</h3>
+                        <div class="image-pair-grid">
+                            <div class="image-frame-card" onclick="openLightbox('img-hair-mask', 'Isolated Hair Artifact Mask')">
+                                <div class="frame-media">
+                                    <img id="img-hair-mask" src="" alt="Hair Artifact Mask">
+                                </div>
+                                <div class="frame-footer">
+                                    <span class="footer-title">Isolated Hair Mask</span>
+                                    <span class="footer-tag">Morphological Top-Hat</span>
+                                </div>
+                            </div>
+                            <div class="image-frame-card" onclick="openLightbox('img-hair-inpainted', 'Inpainted Dermal Surface')">
+                                <div class="frame-media">
+                                    <img id="img-hair-inpainted" src="" alt="Inpainted Clean Skin">
+                                </div>
+                                <div class="frame-footer">
+                                    <span class="footer-title">Reconstructed Clean Surface</span>
+                                    <span class="footer-tag">Telea Fast-Marching Inpainting</span>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="inference-box">
-                            <h4>Clinical Conclusion:</h4>
-                            <p><strong>Action Done:</strong> Extracted mathematical metrics from the K-Means cluster mask and Canny edge map to simulate the dermatological ABCD rule.</p>
-                            <p><strong>Inference:</strong> By calculating the asymmetry, border compactness, and color deviation of the isolated lesion, the system assigns a baseline clinical risk score. This proves that the earlier computer vision preprocessing steps yield highly actionable data that can directly automate real-world diagnostic triage protocols.</p>
+                        <div class="clinical-note-box">
+                            <div class="note-header">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                <span>Algorithmic Rationale:</span>
+                            </div>
+                            <p>Linear hair fibers corrupt gradient operators, skewing Canny border compactness and distorting K-Means cluster color centroids. Morphological reconstruction guarantees that boundary irregularity reflects genuine cytologic notches rather than occluding hair.</p>
+                        </div>
+                    </section>
+
+                    <!-- Stage 1: Spatial Domain Enhancement & Multi-Color Space (Labs 1 & 2) -->
+                    <section class="analysis-panel">
+                        <div class="panel-header">
+                            <div class="step-indicator">Labs 1 & 2</div>
+                            <div class="panel-header-text">
+                                <h3 class="panel-title">Spatial Domain Enhancement & Multi-Color Space Decomposition</h3>
+                                <p class="panel-subtitle">Decoupling luminance from biological chromophores (vascular erythema & melanin density).</p>
+                            </div>
+                        </div>
+
+                        <div class="image-pair-grid">
+                            <div class="image-frame-card" onclick="openLightbox('img-original', 'Raw Clinical Epiluminescence Dermoscopy')">
+                                <div class="frame-media">
+                                    <img id="img-original" src="" alt="Raw Clinical Image">
+                                </div>
+                                <div class="frame-footer">
+                                    <span class="footer-title">Raw Clinical Dermoscopy</span>
+                                    <span class="footer-tag">RGB Input</span>
+                                </div>
+                            </div>
+                            <div class="image-frame-card" onclick="openLightbox('img-enhanced', 'Spatially Enhanced Dermoscopy')">
+                                <div class="frame-media">
+                                    <img id="img-enhanced" src="" alt="Enhanced Image">
+                                </div>
+                                <div class="frame-footer">
+                                    <span class="footer-title" id="enhanced-title">Enhanced Image (CLAHE)</span>
+                                    <span class="footer-tag">Local Dynamic Range</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5-Channel Color Space Inspection Ribbon (Lab 1) -->
+                        <div class="color-ribbon-section">
+                            <div class="subpanel-title-row">
+                                <h4 class="subpanel-title">Clinical Color Space Decomposition (CIE LAB & HSV):</h4>
+                                <span class="subpanel-tag">Lab 1 Primitives</span>
+                            </div>
+
+                            <div class="color-channels-deck">
+                                <div class="channel-card" onclick="openLightbox('img-hsv-hue', 'HSV Hue Channel')">
+                                    <div class="channel-thumb-wrap">
+                                        <img id="img-hsv-hue" src="" alt="HSV Hue">
+                                    </div>
+                                    <div class="channel-info">
+                                        <span class="channel-name">HSV Hue (H)</span>
+                                        <span class="channel-desc">Chromophore angle</span>
+                                    </div>
+                                </div>
+
+                                <div class="channel-card" onclick="openLightbox('img-hsv-sat', 'HSV Saturation Channel')">
+                                    <div class="channel-thumb-wrap">
+                                        <img id="img-hsv-sat" src="" alt="HSV Saturation">
+                                    </div>
+                                    <div class="channel-info">
+                                        <span class="channel-name">HSV Saturation (S)</span>
+                                        <span class="channel-desc">Pigment purity</span>
+                                    </div>
+                                </div>
+
+                                <div class="channel-card" onclick="openLightbox('img-lab-l', 'CIE LAB Lightness (L*)')">
+                                    <div class="channel-thumb-wrap">
+                                        <img id="img-lab-l" src="" alt="LAB Lightness">
+                                    </div>
+                                    <div class="channel-info">
+                                        <span class="channel-name">LAB Lightness (L*)</span>
+                                        <span class="channel-desc">Perceptual luminance</span>
+                                    </div>
+                                </div>
+
+                                <div class="channel-card highlight-channel" onclick="openLightbox('img-lab-a', 'CIE LAB a* Channel (Erythema / Redness)')">
+                                    <div class="channel-thumb-wrap">
+                                        <img id="img-lab-a" src="" alt="LAB a*">
+                                    </div>
+                                    <div class="channel-info">
+                                        <span class="channel-name">LAB a* (Erythema)</span>
+                                        <span class="channel-desc">Vascular redness</span>
+                                    </div>
+                                </div>
+
+                                <div class="channel-card highlight-channel" onclick="openLightbox('img-lab-b', 'CIE LAB b* Channel (Melanin Pigmentation)')">
+                                    <div class="channel-thumb-wrap">
+                                        <img id="img-lab-b" src="" alt="LAB b*">
+                                    </div>
+                                    <div class="channel-info">
+                                        <span class="channel-name">LAB b* (Melanin)</span>
+                                        <span class="channel-desc">Melanin accumulation</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="clinical-note-box">
+                            <div class="note-header">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                <span>Syllabus Mapping & Clinical Rationale (Labs 1 & 2):</span>
+                            </div>
+                            <p>Standard RGB coordinates couple lighting brightness with pigment values. By converting to CIE LAB and HSV color spaces, illumination gradients are relegated to the $L^*$ channel, isolating deep dermal melanin accumulation ($b^*$) and vascular proliferation / erythema ($a^*$). CLAHE standardizes local dynamic range across non-uniform tele-dermatology photographs without burning out healthy peripheral skin.</p>
+                        </div>
+                    </section>
+
+                    <!-- Stage 2: Spatial Filtering & Boundary Edge Detection (Labs 3 & 4) -->
+                    <section class="analysis-panel">
+                        <div class="panel-header">
+                            <div class="step-indicator">Labs 3 & 4</div>
+                            <div class="panel-header-text">
+                                <h3 class="panel-title">Spatial Filtering & Boundary Edge Detection</h3>
+                                <p class="panel-subtitle">Edge-preserving intradermal smoothing and dual-threshold gradient hysteresis.</p>
+                            </div>
+                        </div>
+
+                        <div class="image-pair-grid">
+                            <div class="image-frame-card" onclick="openLightbox('img-blurred', 'Edge-Preserving Filtered Image')">
+                                <div class="frame-media">
+                                    <img id="img-blurred" src="" alt="Filtered Image">
+                                </div>
+                                <div class="frame-footer">
+                                    <span class="footer-title" id="filtered-title">Filtered Image (Bilateral)</span>
+                                    <span class="footer-tag">Noise Attenuated</span>
+                                </div>
+                            </div>
+                            <div class="image-frame-card" onclick="openLightbox('img-edges', 'Structural Boundary Edge Map')">
+                                <div class="frame-media">
+                                    <img id="img-edges" src="" alt="Edge Map">
+                                </div>
+                                <div class="frame-footer">
+                                    <span class="footer-title" id="edges-title">Boundary Map (Canny)</span>
+                                    <span class="footer-tag">Dual Threshold</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="clinical-note-box">
+                            <div class="note-header">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                <span>Syllabus Mapping & Clinical Rationale (Labs 3 & 4):</span>
+                            </div>
+                            <p>Standard linear low-pass filters (Gaussian / mean blur) attenuate high-frequency edge gradients, blurring ragged malignant borders. Non-linear Bilateral filtering smooths skin micro-pores while retaining steep boundary steps. Canny dual-threshold hysteresis ($T_1=100, T_2=200$) traces structural lesion perimeters without false interior fragmentation.</p>
+                        </div>
+                    </section>
+
+                    <!-- Stage 3: Unsupervised Segmentation & Morphology (Labs 4 & 5) -->
+                    <section class="analysis-panel">
+                        <div class="panel-header">
+                            <div class="step-indicator">Labs 4 & 5</div>
+                            <div class="panel-header-text">
+                                <h3 class="panel-title">Lesion Segmentation & Geometric Morphometrics</h3>
+                                <p class="panel-subtitle">Unsupervised 3D color clustering, automated contrast localization, and convex hull envelope.</p>
+                            </div>
+                        </div>
+
+                        <div class="image-pair-grid">
+                            <div class="image-frame-card" onclick="openLightbox('img-segmented', 'K-Means Quantized Segmentation')">
+                                <div class="frame-media">
+                                    <img id="img-segmented" src="" alt="K-Means Segmented">
+                                </div>
+                                <div class="frame-footer">
+                                    <span class="footer-title">Color Quantization</span>
+                                    <span class="footer-tag">K-Means Cluster Space</span>
+                                </div>
+                            </div>
+                            <div class="image-frame-card highlight-overlay-card" onclick="openLightbox('img-overlay-2', 'Diagnostic Geometric Overlay')">
+                                <div class="frame-media">
+                                    <img id="img-overlay-2" src="" alt="Diagnostic Contour Overlay">
+                                </div>
+                                <div class="frame-footer">
+                                    <span class="footer-title">Geometric Morphometrics</span>
+                                    <span class="footer-tag">Boundary & Convex Hull</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="overlay-legend-bar">
+                            <div class="legend-key-item">
+                                <span class="legend-color-box box-red"></span>
+                                <span>Primary Lesion Contour (<code>cv2.findContours</code>)</span>
+                            </div>
+                            <div class="legend-key-item">
+                                <span class="legend-color-box box-cyan"></span>
+                                <span>Convex Hull Envelope (<code>cv2.convexHull</code>)</span>
+                            </div>
+                            <div class="legend-key-item">
+                                <span class="legend-color-box box-green"></span>
+                                <span>Min-Area Bounding Box (<code>cv2.minAreaRect</code>)</span>
+                            </div>
+                            <div class="legend-key-item">
+                                <span class="legend-color-box box-yellow"></span>
+                                <span>Centroid Coordinates (<code>cv2.moments</code>)</span>
+                            </div>
+                        </div>
+
+                        <!-- Isolated Tissue Clusters Deck -->
+                        <div class="isolated-clusters-wrap">
+                            <h4 class="subpanel-title">Isolated Chromophore Clusters & Target Identification:</h4>
+                            <div class="clusters-grid" id="cluster-container">
+                                <!-- Injected dynamically by JS -->
+                            </div>
+                        </div>
+
+                        <div class="clinical-note-box">
+                            <div class="note-header">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                <span>Syllabus Mapping & Clinical Rationale (Labs 4 & 5):</span>
+                            </div>
+                            <p>Tissue clustering operates in 3D color space without relying on fragile center-pixel assumptions. The automated border-contrast algorithm determines background epidermal skin versus target lesion parenchyma. Morphological closing fills internal follicular gaps, while the ratio between contour perimeter and convex hull area generates the mathematical Compactness and Border Irregularity vectors for Stolz ABCD triage.</p>
+                        </div>
+                    </section>
+
+                    <!-- Stage 4: Quantitative Micro & Macro Texture Deck (Lab 5) -->
+                    <section class="analysis-panel">
+                        <div class="panel-header">
+                            <div class="step-indicator">Lab 5 Features</div>
+                            <div class="panel-header-text">
+                                <h3 class="panel-title">Quantitative Micro & Macro Texture Deck</h3>
+                                <p class="panel-subtitle">Rotation-invariant Uniform Local Binary Patterns (LBP) & Haralick second-order GLCM statistics.</p>
+                            </div>
+                        </div>
+
+                        <div class="texture-deck-grid">
+                            <div class="image-frame-card" onclick="openLightbox('img-lbp', 'Local Binary Pattern Texture Map')">
+                                <div class="frame-media">
+                                    <img id="img-lbp" src="" alt="LBP Texture Map">
+                                </div>
+                                <div class="frame-footer">
+                                    <span class="footer-title">LBP Texture Map</span>
+                                    <span class="footer-tag">Micro-Topography</span>
+                                </div>
+                            </div>
+                            <div class="chart-panel-card">
+                                <div class="chart-header">
+                                    <span class="chart-title">LBP Micro-Texture Histogram Signature</span>
+                                    <span class="chart-sub">Uniform circular patterns (R=3, P=24)</span>
+                                </div>
+                                <div class="chart-canvas-wrap">
+                                    <canvas id="lbpChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- GLCM Haralick Metrics Dashboard -->
+                        <div class="glcm-metrics-section">
+                            <h4 class="subpanel-title">Gray-Level Co-occurrence Matrix (GLCM) Second-Order Statistics:</h4>
+                            
+                            <div class="glcm-cards-grid">
+                                
+                                <div class="glcm-metric-card">
+                                    <span class="glcm-metric-label">Contrast</span>
+                                    <span class="glcm-metric-val" id="val-glcm-contrast">--</span>
+                                    <p class="glcm-metric-desc">Intensity variance between neighbor pixels. High in ulcerated/malignant lesions.</p>
+                                </div>
+
+                                <div class="glcm-metric-card">
+                                    <span class="glcm-metric-label">Dissimilarity</span>
+                                    <span class="glcm-metric-val" id="val-glcm-dissimilarity">--</span>
+                                    <p class="glcm-metric-desc">Mean absolute difference across adjacent spatial pixel pairings.</p>
+                                </div>
+
+                                <div class="glcm-metric-card">
+                                    <span class="glcm-metric-label">Homogeneity</span>
+                                    <span class="glcm-metric-val" id="val-glcm-homogeneity">--</span>
+                                    <p class="glcm-metric-desc">Clustering of matrix diagonals. Elevated in uniform benign nevi.</p>
+                                </div>
+
+                                <div class="glcm-metric-card">
+                                    <span class="glcm-metric-label">Energy (ASM)</span>
+                                    <span class="glcm-metric-val" id="val-glcm-energy">--</span>
+                                    <p class="glcm-metric-desc">Angular Second Moment. Measures structural textural orderliness.</p>
+                                </div>
+
+                                <div class="glcm-metric-card">
+                                    <span class="glcm-metric-label">Correlation</span>
+                                    <span class="glcm-metric-val" id="val-glcm-correlation">--</span>
+                                    <p class="glcm-metric-desc">Linear gray-level dependency across orientations [0&deg;, 45&deg;, 90&deg;, 135&deg;].</p>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="clinical-note-box">
+                            <div class="note-header">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                <span>Syllabus Mapping & Clinical Rationale (Lab 5):</span>
+                            </div>
+                            <p>Cellular atypia and loss of tissue differentiation in cutaneous melanoma manifest as elevated GLCM contrast and depressed homogeneity. LBP captures fine-grained dermatoglyphic disruption, providing objective numeric vectors for clinical triage.</p>
                         </div>
                     </section>
 
                 </div>
+
             </div>
         </main>
     </div>
+
+    <!-- Lightbox Modal for High-Res Image Inspection -->
+    <div id="lightbox-modal" class="lightbox-backdrop" onclick="closeLightbox()" style="display:none;">
+        <div class="lightbox-content" onclick="event.stopPropagation()">
+            <div class="lightbox-header">
+                <span class="lightbox-title" id="lightbox-title">High-Resolution Diagnostic Inspection</span>
+                <button type="button" class="lightbox-close" onclick="closeLightbox()">&times;</button>
+            </div>
+            <div class="lightbox-body">
+                <img id="lightbox-img" src="" alt="High-Resolution Inspection View">
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Printable Medical Consultation Dossier -->
+    <div id="print-dossier" class="print-only"></div>
 
     <script src="script.js"></script>
 </body>

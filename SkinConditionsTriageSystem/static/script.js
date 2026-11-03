@@ -502,3 +502,54 @@ window.addEventListener('DOMContentLoaded', () => {
     // Automatically load the landmark Melanoma ISIC case on load
     loadSampleCase('melanoma');
 });
+
+
+// ==========================================================================
+// Interactive Concept & Parameter Manual (Modal Controller)
+// ==========================================================================
+
+function openConceptGuide() {
+    const modal = document.getElementById('concept-guide-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeConceptGuide() {
+    const modal = document.getElementById('concept-guide-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function switchGuideTab(categoryId) {
+    document.querySelectorAll('.guide-nav-chip').forEach(chip => chip.classList.remove('active'));
+    if (window.event && window.event.currentTarget) {
+        window.event.currentTarget.classList.add('active');
+    }
+
+    const cards = document.querySelectorAll('.guide-card, .guide-intro-callout');
+    cards.forEach(card => {
+        const cat = card.getAttribute('data-category');
+        if (categoryId === 'all' || cat === categoryId) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    const scrollContainer = document.getElementById('guide-modal-scroll');
+    if (scrollContainer) {
+        scrollContainer.scrollTop = 0;
+    }
+}
+
+// Global Escape Key Listener for Modals
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeConceptGuide();
+        closeLightbox();
+    }
+});

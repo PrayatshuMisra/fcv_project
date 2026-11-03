@@ -1960,3 +1960,534 @@ input:checked + .toggle-slider::before {
         -webkit-print-color-adjust: exact;
     }
 }
+
+
+/* ==========================================================================
+   Concept & Parameter Manual (Interactive Guide Modal & Sidebar Trigger)
+   ========================================================================== */
+
+/* Sidebar Guide Trigger Button */
+/* ==========================================================================
+   Concept & Parameter Manual (Interactive Guide Modal & Sidebar Trigger)
+   ========================================================================== */
+
+/* Sidebar Guide Trigger Button */
+.guide-action-panel {
+    padding: 1rem 1.25rem;
+    background: linear-gradient(180deg, rgba(2, 132, 199, 0.04) 0%, rgba(2, 132, 199, 0.08) 100%);
+    border-bottom: 1px solid var(--border-hairline);
+}
+
+.btn-guide-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0.85rem;
+    background-color: #ffffff;
+    border: 1px solid rgba(2, 132, 199, 0.3);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    text-align: left;
+    box-shadow: 0 2px 4px rgba(2, 132, 199, 0.06);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-guide-trigger:hover {
+    border-color: var(--clinical-blue);
+    background-color: var(--clinical-blue-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(2, 132, 199, 0.12);
+}
+
+.guide-trigger-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    background-color: var(--clinical-navy);
+    color: #38bdf8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.guide-trigger-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.guide-trigger-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.guide-trigger-sub {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    line-height: 1.3;
+    margin-top: 0.15rem;
+}
+
+.guide-chevron {
+    color: var(--clinical-blue);
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.btn-guide-trigger:hover .guide-chevron {
+    transform: translateX(2px);
+}
+
+/* Guide Modal Overlay */
+.guide-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 120;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    animation: fadeIn 0.2s ease;
+}
+
+.guide-modal-card {
+    background-color: #ffffff;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-modal);
+    max-width: 1100px;
+    width: 100%;
+    height: 88vh;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--border-hairline);
+    animation: slideUpModal 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUpModal {
+    from { opacity: 0; transform: translateY(16px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.guide-modal-header {
+    flex-shrink: 0;
+    min-height: 68px;
+    padding: 1.15rem 1.75rem;
+    border-bottom: 1px solid var(--border-hairline);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+}
+
+.guide-header-title-box {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.guide-header-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    background-color: var(--clinical-blue-light);
+    color: var(--clinical-blue-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.guide-main-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.guide-main-sub {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.guide-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.75rem;
+    line-height: 1;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    transition: all 0.15s;
+}
+
+.guide-modal-close:hover {
+    color: var(--text-primary);
+    background-color: var(--surface-subtle);
+}
+
+/* Category Filter Bar - FIXED: No vertical squishing, clean wrap */
+.guide-nav-bar {
+    flex-shrink: 0;
+    min-height: 52px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem 1.75rem;
+    background-color: var(--surface-canvas);
+    border-bottom: 1px solid var(--border-hairline);
+    align-items: center;
+}
+
+.guide-nav-chip {
+    padding: 0.42rem 0.95rem;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background-color: #ffffff;
+    border: 1px solid var(--border-hairline);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+.guide-nav-chip:hover {
+    border-color: var(--clinical-blue);
+    color: var(--clinical-blue);
+    background-color: rgba(2, 132, 199, 0.04);
+}
+
+.guide-nav-chip.active {
+    background-color: var(--clinical-blue);
+    border-color: var(--clinical-blue);
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(2, 132, 199, 0.25);
+}
+
+/* Modal Body - FIXED: Flex child properly scrolls */
+.guide-modal-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 1.75rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: var(--surface-canvas);
+}
+
+.guide-modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+.guide-modal-body::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 4px;
+}
+
+.guide-intro-callout {
+    background-color: #ffffff;
+    border: 1px solid var(--border-hairline);
+    border-left: 4px solid var(--clinical-blue);
+    border-radius: var(--radius-sm);
+    padding: 1.15rem 1.25rem;
+}
+
+.guide-intro-callout h4 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--clinical-blue-dark);
+    margin-bottom: 0.35rem;
+}
+
+.guide-intro-callout p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+}
+
+/* Individual Concept Article Cards */
+.guide-card {
+    background-color: #ffffff;
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-sm);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+}
+
+.guide-card:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-strong);
+}
+
+.guide-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--border-hairline);
+}
+
+.guide-pill-badge {
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+}
+
+.lab-1-badge { background-color: #e0e7ff; color: #3730a3; }
+.lab-2-badge { background-color: #e0f2fe; color: #0369a1; }
+.lab-3-badge { background-color: #fef3c7; color: #92400e; }
+.lab-4-badge { background-color: #f1f5f9; color: #334155; }
+.lab-5-badge { background-color: #dbeafe; color: #1e40af; }
+.lab-triage-badge { background-color: #fee2e2; color: #991b1b; }
+.lab-summary-badge { background-color: #ecfdf5; color: #065f46; }
+
+.guide-card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.guide-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.guide-block-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+}
+
+.guide-block p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+}
+
+.guide-bullet-list, .guide-numbered-list {
+    margin-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.guide-bullet-list strong, .guide-numbered-list strong {
+    color: var(--text-primary);
+}
+
+/* Mathematical Formula Callouts */
+.math-formula-box {
+    display: block;
+    background-color: var(--surface-canvas);
+    border: 1px solid var(--border-hairline);
+    border-left: 3px solid var(--clinical-blue);
+    border-radius: 4px;
+    padding: 0.55rem 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--clinical-blue-dark);
+    margin: 0.5rem 0 0.75rem;
+}
+
+.formula-callout-box {
+    background-color: var(--surface-canvas);
+    border: 1px solid var(--border-hairline);
+    border-radius: 6px;
+    padding: 0.85rem 1rem;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--clinical-blue-dark);
+    margin-bottom: 0.85rem;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
+}
+
+/* Slider Impact Columns */
+.guide-slider-effects {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    background-color: var(--surface-canvas);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-sm);
+    padding: 1.15rem;
+}
+
+.slider-effect-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.effect-decrease {
+    border-left: 3px solid #f59e0b; /* Amber */
+    padding-left: 0.85rem;
+}
+
+.effect-increase {
+    border-left: 3px solid var(--clinical-blue); /* Sky Blue */
+    padding-left: 0.85rem;
+}
+
+.effect-header {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.15rem;
+}
+
+.slider-effect-col p {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.guide-impact-box {
+    background-color: #f8fafc;
+    border: 1px solid var(--border-hairline);
+    border-left: 3px solid var(--clinical-teal);
+    border-radius: 4px;
+    padding: 0.85rem 1.15rem;
+}
+
+.guide-impact-title {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--clinical-teal);
+    margin-bottom: 0.25rem;
+}
+
+.guide-impact-box p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Risk Stratification Callout Rows */
+.risk-stratification-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.strat-row {
+    display: grid;
+    grid-template-columns: 140px 180px 1fr;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: 4px;
+    font-size: 0.78rem;
+}
+
+.strat-range {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+}
+
+.strat-level {
+    font-weight: 700;
+}
+
+.strat-action {
+    color: var(--text-secondary);
+}
+
+.strat-benign {
+    background-color: var(--triage-benign-bg);
+    border: 1px solid var(--triage-benign-border);
+    color: var(--triage-benign);
+}
+
+.strat-suspicious {
+    background-color: var(--triage-suspicious-bg);
+    border: 1px solid var(--triage-suspicious-border);
+    color: var(--triage-suspicious);
+}
+
+.strat-malignant {
+    background-color: var(--triage-malignant-bg);
+    border: 1px solid var(--triage-malignant-border);
+    color: var(--triage-malignant);
+}
+
+/* Master Reference Table */
+.guide-table-responsive {
+    overflow-x: auto;
+}
+
+.guide-reference-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    text-align: left;
+}
+
+.guide-reference-table th {
+    background-color: var(--surface-canvas);
+    color: var(--text-primary);
+    font-weight: 700;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--border-hairline);
+    white-space: nowrap;
+}
+
+.guide-reference-table td {
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--border-hairline);
+    color: var(--text-secondary);
+    vertical-align: top;
+    line-height: 1.45;
+}
+
+.guide-reference-table tr:hover {
+    background-color: rgba(2, 132, 199, 0.03);
+}
+
+/* Guide Modal Footer */
+.guide-modal-footer {
+    flex-shrink: 0;
+    min-height: 56px;
+    padding: 0.85rem 1.75rem;
+    border-top: 1px solid var(--border-hairline);
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.guide-footer-note {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}

@@ -1,5 +1,7 @@
 \# ClinicalVision 2.0: Automated Visual Triage System for Skin Lesions 🔬
 
+python -m uvicorn api:app --reload --port 8000
+http://localhost:8000
 
 
 \[!\[Python 3.11+](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python\&logoColor=white)](https://www.python.org/)

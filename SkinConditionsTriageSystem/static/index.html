@@ -65,6 +65,26 @@
                 </div>
             </div>
 
+            
+            <!-- Interactive Concept & Parameter Manual Trigger -->
+            <div class="sidebar-section guide-action-panel">
+                <button type="button" class="btn-guide-trigger" onclick="openConceptGuide()" title="Click to understand all concepts, mathematical definitions, and what increasing/decreasing each lever does">
+                    <div class="guide-trigger-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            <circle cx="12" cy="8" r="2"></circle>
+                            <line x1="12" y1="12" x2="12" y2="16"></line>
+                        </svg>
+                    </div>
+                    <div class="guide-trigger-text">
+                        <span class="guide-trigger-title">Algorithm & Concepts Guide</span>
+                        <span class="guide-trigger-sub">What every slider, filter & score means</span>
+                    </div>
+                    <svg class="guide-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+            </div>
+
             <!-- Pipeline Parameters (Labs 1 to 5) -->
             <div class="sidebar-section pipeline-controls">
                 <div class="section-header-row">
@@ -877,7 +897,450 @@
         </main>
     </div>
 
-    <!-- Lightbox Modal for High-Res Image Inspection -->
+    
+    <!-- ==========================================================================
+         Interactive Concept, Parameter & Clinical Syllabus Manual Modal
+         ========================================================================== -->
+    <div id="concept-guide-modal" class="guide-modal-backdrop" onclick="closeConceptGuide()" style="display:none;">
+        <div class="guide-modal-card" onclick="event.stopPropagation()">
+            
+            <!-- Modal Header -->
+            <div class="guide-modal-header">
+                <div class="guide-header-title-box">
+                    <div class="guide-header-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="guide-main-title">Computer Vision Concepts & Parameter Engineering Manual</h2>
+                        <p class="guide-main-sub">Foundations of Computer Vision (CSE 3176: Labs 1 to 5) &bull; Clinical Dermatological Principles</p>
+                    </div>
+                </div>
+                <div class="guide-header-actions">
+                    <button type="button" class="guide-modal-close" onclick="closeConceptGuide()" title="Close Manual (Esc)">&times;</button>
+                </div>
+            </div>
+
+            <!-- Category Navigation Tabs -->
+            <div class="guide-nav-bar">
+                <button type="button" class="guide-nav-chip active" onclick="switchGuideTab('all')">All Concepts</button>
+                <button type="button" class="guide-nav-chip" onclick="switchGuideTab('lab1')">Color Spaces (Lab 1)</button>
+                <button type="button" class="guide-nav-chip" onclick="switchGuideTab('lab2')">Enhancements (Lab 2)</button>
+                <button type="button" class="guide-nav-chip" onclick="switchGuideTab('lab3')">Filtering & Hair (Lab 3)</button>
+                <button type="button" class="guide-nav-chip" onclick="switchGuideTab('lab4')">Edge Detection (Lab 4)</button>
+                <button type="button" class="guide-nav-chip" onclick="switchGuideTab('lab5')">Segmentation & Textures (Lab 5)</button>
+                <button type="button" class="guide-nav-chip" onclick="switchGuideTab('abcd')">Stolz ABCD & TDS</button>
+                <button type="button" class="guide-nav-chip" onclick="switchGuideTab('table')">Parameter Impact Table</button>
+            </div>
+
+            <!-- Modal Body Content with Scroll -->
+            <div class="guide-modal-body" id="guide-modal-scroll">
+
+                <!-- Section: Master Introduction -->
+                <div class="guide-intro-callout" data-category="all">
+                    <h4>Why this guide matters:</h4>
+                    <p>
+                        In computer vision and medical triage, parameter controls are not arbitrary levers. Every slider controls a specific mathematical transformation in the spatial, frequency, or color domain. This guide explains the exact mathematical operation, why it was chosen over alternatives, and what happens physically to image pixels when you increase or decrease each value.
+                    </p>
+                </div>
+
+                <!-- CONCEPT 1: Lab 1 Multi-Color Space Decomposition -->
+                <article class="guide-card" data-category="lab1">
+                    <div class="guide-card-header">
+                        <span class="guide-pill-badge lab-1-badge">Lab 1</span>
+                        <h3 class="guide-card-title">Multi-Color Space Decomposition (RGB vs. CIE LAB vs. HSV)</h3>
+                    </div>
+                    <div class="guide-card-body">
+                        <div class="guide-block">
+                            <span class="guide-block-label">Concept & Mathematical Foundation:</span>
+                            <p>Standard RGB encodes images as red, green, and blue photon intensities. However, in RGB, <strong>chrominance (color) and luminance (lighting/brightness) are heavily coupled</strong>. If a clinical examination room's lighting changes, all three R, G, and B values shift unpredictably.</p>
+                            <p>To solve this, we project pixels into <strong>CIE LAB</strong> and <strong>HSV</strong> color spaces:</p>
+                            <ul class="guide-bullet-list">
+                                <li><strong>CIE LAB L* (Lightness)</strong>: Represents perceptual brightness (0 = black, 100 = diffuse white), completely decoupled from pigment color.</li>
+                                <li><strong>CIE LAB a* (Erythema / Redness Axis)</strong>: Measures the green-to-red axis. In dermatology, elevated <em>a*</em> corresponds directly to <em>vascular erythema, angiogenesis, and tumor blood vessel density</em>.</li>
+                                <li><strong>CIE LAB b* (Melanin Accumulation Axis)</strong>: Measures the blue-to-yellow axis. Corresponds directly to <em>dermal melanin pigment clumping</em>.</li>
+                                <li><strong>HSV Hue (H)</strong>: The pure chromophore dominant wavelength angle (0&deg; to 360&deg;).</li>
+                                <li><strong>HSV Saturation (S)</strong>: The purity or density of the chromophore (distinguishes dense melanin nests from fair skin).</li>
+                            </ul>
+                        </div>
+                        <div class="guide-impact-box">
+                            <span class="guide-impact-title">Clinical Diagnostic Purpose:</span>
+                            <p>By extracting <em>a*</em> and <em>b*</em>, the computer vision pipeline measures biological tumor markers (blood vessel growth and melanin density) without being tricked by room lighting, flash glares, or shadow gradients.</p>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- CONCEPT 2: Lab 2 Spatial Domain Enhancement -->
+                <article class="guide-card" data-category="lab2">
+                    <div class="guide-card-header">
+                        <span class="guide-pill-badge lab-2-badge">Lab 2</span>
+                        <h3 class="guide-card-title">Spatial Domain Intensity Transformations & Dynamic Range Standardization</h3>
+                    </div>
+                    <div class="guide-card-body">
+                        <div class="guide-block">
+                            <span class="guide-block-label">Algorithm Options & Working Principles:</span>
+                            <ul class="guide-bullet-list">
+                                <li><strong>CLAHE (Contrast Limited Adaptive Histogram Equalization)</strong>: Subdivides the image into an 8 &times; 8 grid of contextual tiles. Equalizes the histogram within each tile while enforcing a strict <em>clip limit (2.0)</em> that redistributes excessive histogram peaks. Borders are seamlessly blended with bilinear interpolation.</li>
+                                <li><strong>Contrast Stretching (Min-Max Normalization)</strong>: Linearly rescales pixel values across the full 8-bit dynamic range:
+                                    <div class="math-formula-box">I<sub>out</sub> = [(I &minus; I<sub>min</sub>) / (I<sub>max</sub> &minus; I<sub>min</sub>)] &times; 255</div>
+                                </li>
+                                <li><strong>Global Histogram Equalization (GHE)</strong>: Flattens the entire global cumulative distribution function (CDF).</li>
+                                <li><strong>Power-Law / Gamma Correction</strong>: Non-linear intensity mapping:
+                                    <div class="math-formula-box">s = c &times; r<sup>&gamma;</sup></div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="guide-slider-effects">
+                            <div class="slider-effect-col effect-decrease">
+                                <span class="effect-header">&darr; Decreasing Gamma (&gamma; &lt; 1.0)</span>
+                                <p><strong>Visual Impact:</strong> Non-linearly lifts and brightens mid-tones and dark shadows while compressing bright regions.</p>
+                                <p><strong>Clinical Utility:</strong> Uncovers dark, underexposed dermoscopic close-ups and reveals faint pigment networks previously buried in shadow.</p>
+                            </div>
+                            <div class="slider-effect-col effect-increase">
+                                <span class="effect-header">&uarr; Increasing Gamma (&gamma; &gt; 1.0)</span>
+                                <p><strong>Visual Impact:</strong> Deepens shadows, darkens mid-tones, and steepens contrast transitions around boundaries.</p>
+                                <p><strong>Clinical Utility:</strong> Accentuates high-contrast melanoma borders against fair skin, but may obscure internal lesion details if set too high (&gt;1.8).</p>
+                            </div>
+                        </div>
+                        <div class="guide-impact-box">
+                            <span class="guide-impact-title">Why CLAHE beats Global Equalization in Clinical Dermoscopy:</span>
+                            <p>Healthy skin typically occupies 60%–80% of dermoscopy imagery. Global Histogram Equalization is dominated by this skin background, which over-amplifies uniform skin regions into washed-out, blown-out white blooming. CLAHE isolates each tile and prevents noise amplification, preserving razor-sharp lesion edges.</p>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- CONCEPT 3: Lab 3 Morphological Hair Removal & Spatial Noise Filtering -->
+                <article class="guide-card" data-category="lab3">
+                    <div class="guide-card-header">
+                        <span class="guide-pill-badge lab-3-badge">Lab 3</span>
+                        <h3 class="guide-card-title">Artifact Suppression (DullRazor) & Spatial Domain Filtering</h3>
+                    </div>
+                    <div class="guide-card-body">
+                        <div class="guide-block">
+                            <span class="guide-block-label">1. DullRazor Morphological Inpainting (Pre-Filter):</span>
+                            <p>Terminal hair strands cross the skin and create false dark lines. DullRazor applies a <strong>Black Top-Hat transform</strong> with linear structuring elements:
+                                <div class="math-formula-box">T<sub>b</sub>(f) = (f &bull; B) &minus; f</div>
+                            where &bull; denotes morphological closing. This isolates dark, thin, directional lines while ignoring broad lesion pigmentation. Corrupted hair pixels are then reconstructed using <strong>Telea's Fast-Marching Inpainting</strong>, propagating surrounding epidermal texture along image gradients.</p>
+                            <p><strong>Clinical Impact:</strong> If hairs are not removed, Canny edge detection interprets hair as notched lesion boundaries, falsely inflating Border Irregularity (<em>B</em>) and corrupting K-Means clusters.</p>
+                        </div>
+
+                        <div class="guide-block">
+                            <span class="guide-block-label">2. Spatial Noise Filters Compared:</span>
+                            <ul class="guide-bullet-list">
+                                <li><strong>Bilateral Filter (Recommended Clinical Standard)</strong>: Non-linear, dual-Gaussian filter. Considers both spatial Euclidean distance (&sigma;<sub>s</sub>) and intensity photometric difference (&sigma;<sub>r</sub>).<br>
+                                <strong>Why it is superior:</strong> Smooths dermal micro-pores and camera sensor noise across uniform skin, but when it encounters a steep lesion boundary, the photometric weight drops to 0, leaving the lesion border <em>completely sharp and unblurred</em>.</li>
+                                <li><strong>Gaussian Blur (Linear Low-Pass)</strong>: Convolves an isotropic 2D Gaussian bell curve. Smooths noise but smears genuine malignant notched borders into soft gradients.</li>
+                                <li><strong>Median Filter (Order-Statistic)</strong>: Replaces center pixel with the median of neighboring pixels. Ideal for suppressing impulse salt-and-pepper noise and fluid immersion bubbles.</li>
+                            </ul>
+                        </div>
+
+                        <div class="guide-slider-effects">
+                            <div class="slider-effect-col effect-decrease">
+                                <span class="effect-header">&darr; Decreasing Kernel Size (3 px &ndash; 5 px)</span>
+                                <p><strong>Visual Impact:</strong> Preserves ultra-fine textural details and delicate micro-vessel arborization.</p>
+                                <p><strong>Clinical Utility:</strong> Best for high-resolution dermoscopic imagery with low sensor noise.</p>
+                            </div>
+                            <div class="slider-effect-col effect-increase">
+                                <span class="effect-header">&uarr; Increasing Kernel Size (7 px &ndash; 15 px)</span>
+                                <p><strong>Visual Impact:</strong> Aggressively attenuates intradermal texture, smoothing rough skin and noise specks.</p>
+                                <p><strong>Clinical Risk:</strong> Over-smoothing (&gt;9px in Gaussian) can artificially round off malignant ragged edges, potentially causing false-negative border scores.</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- CONCEPT 4: Lab 4 Boundary Edge Detection -->
+                <article class="guide-card" data-category="lab4">
+                    <div class="guide-card-header">
+                        <span class="guide-pill-badge lab-4-badge">Lab 4</span>
+                        <h3 class="guide-card-title">Boundary Delineation & Edge Operators (Canny vs. Sobel)</h3>
+                    </div>
+                    <div class="guide-card-body">
+                        <div class="guide-block">
+                            <span class="guide-block-label">Canny 4-Stage Optimal Edge Detection:</span>
+                            <ol class="guide-numbered-list">
+                                <li><strong>Gaussian Smoothing</strong>: Dampens high-frequency thermal sensor noise.</li>
+                                <li><strong>Sobel Gradient Vector</strong>: Calculates directional derivatives G<sub>x</sub>, G<sub>y</sub>, gradient magnitude M = &radic;(G<sub>x</sub><sup>2</sup> + G<sub>y</sub><sup>2</sup>), and direction &theta; = arctan(G<sub>y</sub> / G<sub>x</sub>).</li>
+                                <li><strong>Non-Maximum Suppression (NMS)</strong>: Thinning process. A pixel is retained only if its gradient magnitude is a local maximum along the gradient direction &theta;, producing crisp 1-pixel-wide edge ridges.</li>
+                                <li><strong>Hysteresis Thresholding (T₁, T₂)</strong>: Dual thresholds prevent edge streaking and noise fragmentation.</li>
+                            </ol>
+                        </div>
+
+                        <div class="guide-slider-effects">
+                            <div class="slider-effect-col effect-decrease">
+                                <span class="effect-header">&darr; Lowering Lower Threshold (T₁) (e.g. 30 &ndash; 70)</span>
+                                <p><strong>Visual Impact:</strong> Accepts weaker gradient ridges and connects faint, low-contrast lesion boundaries.</p>
+                                <p><strong>Risk:</strong> May introduce spurious lines from normal skin wrinkles or follicular pits.</p>
+                            </div>
+                            <div class="slider-effect-col effect-increase">
+                                <span class="effect-header">&uarr; Raising Upper Threshold (T₂) (e.g. 180 &ndash; 240)</span>
+                                <p><strong>Visual Impact:</strong> Demands steep intensity steps before initiating any edge contour.</p>
+                                <p><strong>Benefit:</strong> Guarantees that only definitive high-contrast lesion boundaries are registered.</p>
+                            </div>
+                        </div>
+                        <div class="guide-impact-box">
+                            <span class="guide-impact-title">Canny vs. Sobel in Lesion Diagnostics:</span>
+                            <p>Sobel outputs a continuous, fuzzy gradient magnitude map showing edge strength everywhere. Canny applies Non-Maximum Suppression and Hysteresis to yield clean, single-pixel connected boundaries essential for mathematical contour tracking and geometric compactness calculations.</p>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- CONCEPT 5: Lab 5 Segmentation & Morphometrics -->
+                <article class="guide-card" data-category="lab5">
+                    <div class="guide-card-header">
+                        <span class="guide-pill-badge lab-5-badge">Lab 5</span>
+                        <h3 class="guide-card-title">Unsupervised 3D K-Means Color Segmentation & Morphometrics</h3>
+                    </div>
+                    <div class="guide-card-body">
+                        <div class="guide-block">
+                            <span class="guide-block-label">1. K-Means 3D Clustering:</span>
+                            <p>Partitions pixels into <em>K</em> clusters by iteratively minimizing the sum of squared Euclidean distances in color space:
+                                <div class="math-formula-box">J = &sum;<sub>j=1..K</sub> &sum;<sub>x &isin; S<sub>j</sub></sub> ||x &minus; &mu;<sub>j</sub>||<sup>2</sup></div>
+                            Each pixel is color-quantized to its nearest cluster centroid.</p>
+                        </div>
+
+                        <div class="guide-slider-effects">
+                            <div class="slider-effect-col effect-decrease">
+                                <span class="effect-header">&darr; Decreasing Clusters (K = 2 &ndash; 3)</span>
+                                <p><strong>Visual Impact:</strong> Forces high color aggregation. Produces clean binary partition: healthy epidermis vs. dark lesion parenchyma.</p>
+                                <p><strong>Clinical Utility:</strong> Optimal for overall lesion boundary delineation and perimeter tracking.</p>
+                            </div>
+                            <div class="slider-effect-col effect-increase">
+                                <span class="effect-header">&uarr; Increasing Clusters (K = 4 &ndash; 6)</span>
+                                <p><strong>Visual Impact:</strong> Decomposes lesion into sub-compartments (black melanin core, light brown reticular network, erythema, hypopigmentation).</p>
+                                <p><strong>Clinical Utility:</strong> Essential for analyzing color variegation and intra-lesional heterogeneity.</p>
+                            </div>
+                        </div>
+
+                        <div class="guide-block">
+                            <span class="guide-block-label">2. Geometric Morphometrics & Overlay Primitives:</span>
+                            <ul class="guide-bullet-list">
+                                <li><strong>Primary Contour (Red)</strong>: The actual boundary of the lesion, extracted via <code>cv2.findContours</code>. Gives exact perimeter <em>P</em> and area <em>A</em>.</li>
+                                <li><strong>Convex Hull Envelope (Cyan)</strong>: The smallest convex polygon enclosing the lesion contour (<code>cv2.convexHull</code>).</li>
+                                <li><strong>Compactness Ratio</strong>:
+                                    <div class="math-formula-box">Compactness = P<sup>2</sup> / (4 &pi; &times; Area)</div>
+                                    A smooth circle has compactness &approx; 1.0. Notched, malignant lesions have high compactness (&gt; 1.5).
+                                </li>
+                                <li><strong>Bounding Box (Green) & Centroid (Yellow Crosshair)</strong>: Derived from spatial image moments M<sub>00</sub>, M<sub>10</sub>, M<sub>01</sub> (<code>cv2.moments</code>). Provides the center of mass and principal inertia axes.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- CONCEPT 6: Lab 5 Texture Descriptors (LBP & GLCM) -->
+                <article class="guide-card" data-category="lab5">
+                    <div class="guide-card-header">
+                        <span class="guide-pill-badge lab-5-badge">Lab 5</span>
+                        <h3 class="guide-card-title">Quantitative Micro & Macro Texture Analysis (LBP & GLCM)</h3>
+                    </div>
+                    <div class="guide-card-body">
+                        <div class="guide-block">
+                            <span class="guide-block-label">1. Local Binary Patterns (LBP) &mdash; Micro-Texture:</span>
+                            <p>Encodes local micro-topography by thresholding a circular neighborhood of <em>P</em> points at radius <em>R</em> against the center pixel. We employ rotation-invariant Uniform LBP (patterns with &le; 2 bitwise transitions).</p>
+                        </div>
+
+                        <div class="guide-slider-effects">
+                            <div class="slider-effect-col effect-decrease">
+                                <span class="effect-header">&darr; Decreasing Radius (R = 1 &ndash; 2)</span>
+                                <p><strong>Visual Impact:</strong> Samples immediate neighboring pixels within a tight micro-neighborhood.</p>
+                                <p><strong>Clinical Focus:</strong> Sensitive to fine dermal surface granularity, micro-pores, and fine pigment networks.</p>
+                            </div>
+                            <div class="slider-effect-col effect-increase">
+                                <span class="effect-header">&uarr; Increasing Radius (R = 3 &ndash; 5)</span>
+                                <p><strong>Visual Impact:</strong> Expands circular sampling radius into surrounding tissue.</p>
+                                <p><strong>Clinical Focus:</strong> Captures macro-architectural textural patterns, pigment globules, blotches, and verrucous keratotic plaques.</p>
+                            </div>
+                        </div>
+
+                        <div class="guide-block">
+                            <span class="guide-block-label">2. Gray-Level Co-occurrence Matrix (GLCM Haralick Descriptors) &mdash; Macro-Texture:</span>
+                            <p>Computes second-order joint conditional probability distribution P(i, j | d, &theta;) of gray levels occurring at distance d &isin; {1, 3} across orientations &theta; &isin; {0&deg;, 45&deg;, 90&deg;, 135&deg;}.</p>
+                            <ul class="guide-bullet-list">
+                                <li><strong>Contrast</strong>: Measures local intensity variations. <em>High in ulcerated, variegated, malignant tumors; low in uniform nevi.</em></li>
+                                <li><strong>Dissimilarity</strong>: Linear step variance between adjacent pixel pairs.</li>
+                                <li><strong>Homogeneity</strong>: Measures diagonal concentration. <em>Elevated in smooth, uniform benign moles.</em></li>
+                                <li><strong>Energy / Angular Second Moment (ASM)</strong>: Measures textural orderliness and uniformity.</li>
+                                <li><strong>Correlation</strong>: Measures linear gray-level dependency among adjacent pixels across spatial directions.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- CONCEPT 7: Stolz ABCD & TDS Formula -->
+                <article class="guide-card" data-category="abcd">
+                    <div class="guide-card-header">
+                        <span class="guide-pill-badge lab-triage-badge">Clinical Triage</span>
+                        <h3 class="guide-card-title">Stolz ABCD Rule & Total Dermoscopy Score (TDS) Clinical Protocol</h3>
+                    </div>
+                    <div class="guide-card-body">
+                        <div class="guide-block">
+                            <span class="guide-block-label">The Mathematical Scoring Formula:</span>
+                            <div class="formula-callout-box">
+                                TDS = 1.3 &times; A + 0.1 &times; B + 0.5 &times; C + 0.5 &times; D
+                            </div>
+                            <ul class="guide-bullet-list">
+                                <li><strong>A &mdash; Asymmetry Score (0 to 2, Weight: 1.3)</strong>:
+                                Evaluated by orienting the lesion along its two principal orthogonal inertia axes (major and minor) and folding the binary mask in half across each axis. If non-overlapping area exceeds 5%, asymmetry is flagged on that axis. Score: 0 = symmetric; 1 = 1-axis asymmetric; 2 = 2-axis asymmetric.</li>
+                                <li><strong>B &mdash; Border Irregularity (0 to 8, Weight: 0.1)</strong>:
+                                The lesion is subdivided into 8 radial octants (45&deg; wedges around the centroid). Each octant is evaluated for radial distance variance and sharp, abrupt border cutoffs vs. smooth gradual tapering. Each notched octant contributes 1 point.</li>
+                                <li><strong>C &mdash; Color Variegation (1 to 6, Weight: 0.5)</strong>:
+                                Automatic chromophore detection for the 6 dermatological colors: <em>1. White (regression/hypopigmentation), 2. Red (erythema/vascularity), 3. Light Brown, 4. Dark Brown, 5. Slate Blue/Gray (deep dermal melanin), 6. Black (superficial melanin)</em>.</li>
+                                <li><strong>D &mdash; Diameter (1 to 5, Weight: 0.5)</strong>:
+                                Maximum physical lesion dimension in millimeters. Clinically, lesions exceeding the &gt;6 mm threshold carry elevated risk.</li>
+                            </ul>
+                        </div>
+
+                        <div class="guide-impact-box">
+                            <span class="guide-impact-title">Calibrated Clinical Risk Stratification:</span>
+                            <div class="risk-stratification-table">
+                                <div class="strat-row strat-benign">
+                                    <span class="strat-range">TDS &lt; 4.75</span>
+                                    <span class="strat-level">Benign / Low Risk</span>
+                                    <span class="strat-action">Routine annual dermatological surveillance recommended.</span>
+                                </div>
+                                <div class="strat-row strat-suspicious">
+                                    <span class="strat-range">4.75 &le; TDS &lt; 5.45</span>
+                                    <span class="strat-level">Suspicious / Pre-Malignant</span>
+                                    <span class="strat-action">Short-term digital dermoscopy monitoring (3 months) or punch biopsy indicated.</span>
+                                </div>
+                                <div class="strat-row strat-malignant">
+                                    <span class="strat-range">TDS &ge; 5.45</span>
+                                    <span class="strat-level">High Risk / Suggestive of Malignancy</span>
+                                    <span class="strat-action">Urgent surgical referral and complete histopathological excision biopsy indicated.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- SECTION: Parameter Impact Master Summary Table -->
+                <article class="guide-card" data-category="table">
+                    <div class="guide-card-header">
+                        <span class="guide-pill-badge lab-summary-badge">Quick Reference</span>
+                        <h3 class="guide-card-title">Parameter Levers & Image Transformation Master Table</h3>
+                    </div>
+                    <div class="guide-card-body">
+                        <div class="guide-table-responsive">
+                            <table class="guide-reference-table">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Lab</th>
+                                        <th>Range / Options</th>
+                                        <th>Decreasing Lever (&darr;)</th>
+                                        <th>Increasing Lever (&uarr;)</th>
+                                        <th>Primary Clinical Impact</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Enhancement Type</strong></td>
+                                        <td>Lab 2</td>
+                                        <td>CLAHE, Min-Max, GHE, Gamma</td>
+                                        <td>&mdash;</td>
+                                        <td>&mdash;</td>
+                                        <td>Standardizes dynamic range across lighting conditions without blowing out skin.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Gamma (&gamma;)</strong></td>
+                                        <td>Lab 2</td>
+                                        <td>0.4 &ndash; 2.4 (Def: 1.0)</td>
+                                        <td>Brightens dark shadows; reveals hidden melanin.</td>
+                                        <td>Darkens mid-tones; steepens contrast boundaries.</td>
+                                        <td>Adapts underexposed phone/tele-dermatology photographs.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>DullRazor Hair Filter</strong></td>
+                                        <td>Lab 3</td>
+                                        <td>Checkbox (On / Off)</td>
+                                        <td>Disabled: Hairs remain visible.</td>
+                                        <td>Enabled: Inpaints hairs via Fast-Marching.</td>
+                                        <td>Prevents hair strands from falsely creating notched borders (<em>B</em>) and splitting clusters.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Spatial Filter</strong></td>
+                                        <td>Lab 3</td>
+                                        <td>Bilateral, Gaussian, Median</td>
+                                        <td>&mdash;</td>
+                                        <td>&mdash;</td>
+                                        <td>Bilateral preserves razor-sharp edges while Gaussian blurs fine border notches.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Filter Kernel Size</strong></td>
+                                        <td>Lab 3</td>
+                                        <td>3 &ndash; 15 px (Def: 5 px)</td>
+                                        <td>Preserves micro-vascular detail; less noise removal.</td>
+                                        <td>Aggressive skin smoothing; may blur fine edge notches.</td>
+                                        <td>Eliminates camera sensor grain before edge extraction.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Edge Operator</strong></td>
+                                        <td>Lab 4</td>
+                                        <td>Canny vs. Sobel</td>
+                                        <td>&mdash;</td>
+                                        <td>&mdash;</td>
+                                        <td>Canny provides single-pixel hysteresis boundaries; Sobel provides gradient magnitude.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Canny T₁ (Lower)</strong></td>
+                                        <td>Lab 4</td>
+                                        <td>10 &ndash; 255 (Def: 100)</td>
+                                        <td>Connects faint, low-contrast lesion boundaries.</td>
+                                        <td>Discards weak edges; eliminates skin wrinkle noise.</td>
+                                        <td>Controls edge continuity and boundary completeness.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Canny T₂ (Upper)</strong></td>
+                                        <td>Lab 4</td>
+                                        <td>20 &ndash; 255 (Def: 200)</td>
+                                        <td>Flags gentle gradients as strong boundaries.</td>
+                                        <td>Requires steep color steps to initiate an edge.</td>
+                                        <td>Prevents interior texture noise from becoming false borders.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>K-Means Clusters (K)</strong></td>
+                                        <td>Lab 5</td>
+                                        <td>2 &ndash; 6 (Def: 3)</td>
+                                        <td>Binary lesion vs. background skin separation.</td>
+                                        <td>Isolates sub-structures (core, regression, erythema).</td>
+                                        <td>Quantizes tissue into chromophore segments for ABCD scoring.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>LBP Radius (R)</strong></td>
+                                        <td>Lab 5</td>
+                                        <td>1 &ndash; 5 (Def: 3)</td>
+                                        <td>Encodes micro-texture (pores, cellular grain).</td>
+                                        <td>Encodes macro-texture (pigment globules, plaques).</td>
+                                        <td>Distinguishes smooth benign nevi from rough verrucous keratoses.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>LBP Points (P)</strong></td>
+                                        <td>Lab 5</td>
+                                        <td>8 &ndash; 32 (Def: 24)</td>
+                                        <td>Faster, coarser angular sampling.</td>
+                                        <td>Richer directional texture resolution.</td>
+                                        <td>Provides numerical feature vectors for machine learning triage.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="guide-modal-footer">
+                <span class="guide-footer-note">CSE 3176 Foundations of Computer Vision Lab &bull; Manipal Institute of Technology</span>
+                <button type="button" class="btn-action btn-primary" onclick="closeConceptGuide()">Got It &bull; Return to Workspace</button>
+            </div>
+
+        </div>
+    </div>
+
+        <!-- Lightbox Modal for High-Res Image Inspection -->
     <div id="lightbox-modal" class="lightbox-backdrop" onclick="closeLightbox()" style="display:none;">
         <div class="lightbox-content" onclick="event.stopPropagation()">
             <div class="lightbox-header">
